@@ -20,7 +20,7 @@ export const metadata = {
         media: "(prefers-color-scheme: dark)",
       },
       {
-        url: "/icon.svg",
+        url: "/icon-dark-32x32",
         type: "image/svg+xml",
       },
     ],

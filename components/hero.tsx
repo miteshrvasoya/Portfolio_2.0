@@ -112,7 +112,7 @@ const Hero = () => {
               }`}
             >
               <Link
-                href="https://github.com"
+                href="https://github.com/miteshrvasoya"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 rounded-xl bg-gray-900/40 hover:bg-cyan-500/10 text-gray-300 hover:text-cyan-400 transition-all duration-200 border border-gray-700 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10"
@@ -121,7 +121,7 @@ const Hero = () => {
                 <Github size={24} />
               </Link>
               <Link
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/mitesh-vasoya/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 rounded-xl bg-gray-900/40 hover:bg-cyan-500/10 text-gray-300 hover:text-cyan-400 transition-all duration-200 border border-gray-700 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10"
@@ -130,7 +130,7 @@ const Hero = () => {
                 <Linkedin size={24} />
               </Link>
               <Link
-                href="mailto:mitesh@example.com"
+                href="mailto:mitesh.r.vasoya@gmail.com"
                 className="p-3 rounded-xl bg-gray-900/40 hover:bg-cyan-500/10 text-gray-300 hover:text-cyan-400 transition-all duration-200 border border-gray-700 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10"
                 aria-label="Email"
               >

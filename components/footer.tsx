@@ -8,22 +8,22 @@ const Footer = () => {
   const socialLinks = [
     {
       icon: Github,
-      href: "https://github.com",
+      href: "https://github.com/miteshrvasoya",
       label: "GitHub",
     },
     {
       icon: Linkedin,
-      href: "https://linkedin.com",
+      href: "https://www.linkedin.com/in/mitesh-vasoya/",
       label: "LinkedIn",
     },
     {
       icon: Twitter,
-      href: "https://twitter.com",
+      href: "https://x.com/mitesh_r_v",
       label: "Twitter",
     },
     {
       icon: Mail,
-      href: "mailto:hello@miteshvasoya.com",
+      href: "mailto:mitesh.r.vasoya@gmail.com",
       label: "Email",
     },
   ]

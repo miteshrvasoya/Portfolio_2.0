@@ -23,26 +23,17 @@ const Education = () => {
 
   const education = [
     {
-      degree: "Bachelor of Technology",
+      degree: "Bachelor of Engineering (B.E.)",
       field: "Computer Science",
-      school: "Indian Institute of Technology (IIT)",
-      year: "2016 - 2018",
-      description: "Specialized in distributed systems and algorithms. GPA: 3.8/4.0",
-    },
-    {
-      degree: "Diploma",
-      field: "Information Technology",
-      school: "Government Polytechnic College",
-      year: "2013 - 2016",
-      description: "Foundation in web technologies and database management.",
-    },
+      school: "Sarvajanik College Of Engineering & Technology (SCET)",
+      year: "2019 - 2023",
+      description: "Specialized in distributed systems and algorithms. GPA: 3.32/4.0",
+    }
   ]
 
   const certifications = [
-    "AWS Certified Solutions Architect - Professional",
-    "Kubernetes Application Developer (CKAD)",
-    "PostgreSQL DBA Certification",
-    "System Design Advanced Course",
+    "Design Thinking for Innovation",
+    "Creating Responsive Web Pages using Bootstrap 4 By Infosys Springboard",
   ]
 
   return (

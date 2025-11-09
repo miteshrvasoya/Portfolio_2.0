@@ -23,19 +23,19 @@ const Skills = () => {
   const skillCategories = [
     {
       category: "Languages",
-      skills: ["JavaScript", "TypeScript", "Python", "SQL", "Go"],
+      skills: ["JavaScript", "TypeScript", "Python", "SQL"],
     },
     {
       category: "Backend",
-      skills: ["Node.js", "Express.js", "NestJS", "Fastify", "gRPC"],
+      skills: ["Node.js", "Express.js", "NestJS"],
     },
     {
       category: "Databases",
-      skills: ["PostgreSQL", "MongoDB", "Redis", "Elasticsearch", "DynamoDB"],
+      skills: ["PostgreSQL", "MongoDB", "Redis", "Elasticsearch"],
     },
     {
       category: "DevOps & Cloud",
-      skills: ["AWS", "Docker", "Kubernetes", "GitHub Actions", "Terraform"],
+      skills: ["AWS", "Docker"],
     },
     {
       category: "Tools & Platforms",
@@ -43,7 +43,7 @@ const Skills = () => {
     },
     {
       category: "Specializations",
-      skills: ["Fintech", "System Design", "Performance Optimization", "CI/CD", "Monitoring"],
+      skills: ["Fintech", "System Design", "Performance Optimization", "Monitoring"],
     },
   ]
 

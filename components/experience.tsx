@@ -26,36 +26,37 @@ const Experience = () => {
       company: "eVitalRx",
       steps: [
         {
-          role: "Junior Web Developer",
-          duration: "Dec 2022 – Aug 2023",
-          achievements: ["Built scalable MERN applications", "Developed e-commerce with JWT & real-time chat"],
-          technologies: ["React", "Node.js", "MongoDB", "Socket.io"],
-        },
-        {
-          role: "Senior Backend Engineer",
-          duration: "Aug 2023 – Present",
+          role: "Backend SDE-II",
+          duration: "Feb 2025 – Present",
           achievements: [
             "Architected ₹50M+ fintech infrastructure",
-            "Integrated Paytm & PhonePe APIs",
-            "Achieved 99.9% uptime SLA",
+            "Architected Payout Module for mass disbursements",
           ],
-          technologies: ["Node.js", "PostgreSQL", "AWS", "Redis", "Kubernetes"],
+          technologies: ["Node.js", "PostgreSQL", "AWS", "Redis"],
           isCurrent: true,
         },
+        {
+          role: "Backend SDE-I",
+          duration: "Aug 2023 - Feb 2025",
+          achievements: [
+            "Integrated multiple third-party payment APIs to enhance transaction processing",
+            "Refactored and optimized SQL queries for Report modules to enhance performance",
+          ],
+          technologies: ["Angular", "Node.js", "MongoDB", "Socket.IO"],
+        }
       ],
     },
     {
-      company: "Digital Payments Co.",
+      company: "DUIUX Infotech",
       steps: [
         {
-          role: "Backend Engineer",
-          duration: "2020 - 2022",
+          role: "Jr. Web Developer",
+          duration: "Dec 2022 - Aug 2023",
           achievements: [
-            "Developed payment processing APIs using NestJS",
-            "Built real-time notification system with 99.9% uptime",
-            "Optimized database queries reducing latency by 35%",
+            "Built scalable MERN applications", 
+            "Developed e-commerce with JWT & real-time chat"
           ],
-          technologies: ["TypeScript", "Express.js", "MongoDB", "Docker", "GraphQL"],
+          technologies: ["TypeScript", "Express.js", "MongoDB", "React", "GraphQL"],
         },
       ],
     },
@@ -66,9 +67,8 @@ const Experience = () => {
       <div className="space-y-16">
         {/* Section Header */}
         <div
-          className={`space-y-4 transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
+          className={`space-y-4 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
         >
           <span className="text-cyan-400 font-semibold text-sm uppercase tracking-widest">Experience</span>
           <h2 className="text-4xl md:text-5xl font-bold text-white">Professional Journey</h2>
@@ -82,9 +82,8 @@ const Experience = () => {
             <div key={companyIndex} className="space-y-6">
               {/* Company Header */}
               <div
-                className={`transition-all duration-700 ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
+                className={`transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
                 style={{
                   transitionDelay: isVisible ? `${companyIndex * 100}ms` : "0ms",
                 }}
@@ -101,9 +100,8 @@ const Experience = () => {
                 {company.steps.map((step, stepIndex) => (
                   <div
                     key={stepIndex}
-                    className={`mb-8 last:mb-0 transition-all duration-700 ${
-                      isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
-                    }`}
+                    className={`mb-8 last:mb-0 transition-all duration-700 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+                      }`}
                     style={{
                       transitionDelay: isVisible ? `${companyIndex * 150 + stepIndex * 100 + 200}ms` : "0ms",
                     }}

@@ -24,9 +24,26 @@ const Projects = () => {
 
   const projects = [
     {
+      title: "Tryk - AI Support Automation",
+      description: [
+        "AI automation tool for Shopify stores.",
+        "Handles customer service for 500+ merchants.",
+        "Resolves 85% of queries automatically using AI.",
+        "Real-time sync with PostgreSQL and WebSockets.",
+      ],
+      technologies: ["Node.js", "React", "PostgreSQL", "WebSockets", "OpenAI", "Stripe"],
+      links: {
+        github: "https://github.com",
+        demo: "https://tryk.vercel.app?utm_source=portfolio",
+      },
+    },
+    {
       title: "Payment Processing Platform",
-      description:
-        "Built a high-performance payment processing system handling 500K transactions/day. Implemented real-time settlement, fraud detection, and multi-currency support.",
+      description: [
+        "High-performance system handling 500K daily transactions.",
+        "Features real-time settlement and fraud detection.",
+        "Supports multi-currency processing.",
+      ],
       technologies: ["Node.js", "PostgreSQL", "Redis", "Kafka", "AWS"],
       links: {
         github: "https://github.com",
@@ -35,8 +52,11 @@ const Projects = () => {
     },
     {
       title: "Real-time Analytics Engine",
-      description:
-        "Developed streaming analytics pipeline with sub-second latency. Processes and aggregates billions of events daily. Built custom dashboards for data visualization.",
+      description: [
+        "Streaming analytics pipeline with sub-second latency.",
+        "Processes and aggregates billions of events daily.",
+        "Custom dashboards for real-time visualization.",
+      ],
       technologies: ["TypeScript", "Elasticsearch", "Kafka", "Node.js", "Docker"],
       links: {
         github: "https://github.com",
@@ -45,8 +65,11 @@ const Projects = () => {
     },
     {
       title: "Microservices Infrastructure",
-      description:
-        "Designed and implemented microservices architecture for scalable fintech platform. Includes service discovery, API gateway, and distributed tracing.",
+      description: [
+        "Scalable microservices architecture for fintech.",
+        "Includes service discovery and API gateway.",
+        "Implemented distributed tracing system.",
+      ],
       technologies: ["Kubernetes", "Docker", "gRPC", "Prometheus", "Grafana"],
       links: {
         github: "https://github.com",
@@ -55,8 +78,11 @@ const Projects = () => {
     },
     {
       title: "Database Optimization Suite",
-      description:
-        "Created tools and guidelines for PostgreSQL query optimization. Reduced P99 query latency by 60% across production databases.",
+      description: [
+        "Tools for PostgreSQL query optimization.",
+        "Reduced P99 query latency by 60%.",
+        "Established performance monitoring guidelines.",
+      ],
       technologies: ["PostgreSQL", "Python", "SQL", "Monitoring", "Performance"],
       links: {
         github: "https://github.com",
@@ -101,7 +127,13 @@ const Projects = () => {
               <h3 className="text-xl font-semibold mb-2 group-hover:text-accent transition-colors">{project.title}</h3>
 
               {/* Description */}
-              <p className="text-foreground/70 mb-4 leading-relaxed">{project.description}</p>
+              <ul className="list-disc pl-5 mb-4 space-y-1 text-foreground/70">
+                {project.description.map((point, i) => (
+                  <li key={i} className="leading-relaxed">
+                    {point}
+                  </li>
+                ))}
+              </ul>
 
               {/* Technologies */}
               <div className="flex flex-wrap gap-2 mb-6">

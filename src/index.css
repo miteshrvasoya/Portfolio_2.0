@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply text-base leading-relaxed;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  h1 {
+    @apply text-3xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-2xl md:text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+
+  p {
+    @apply text-base md:text-lg;
+    color: inherit;
+  }
+
+  /* Improved readability */
+  strong, .font-semibold {
+    @apply font-bold;
+  }
+
+  /* Link styles */
+  a {
+    @apply transition-colors duration-200;
+  }
+
+  /* Selection color */
+  ::selection {
+    @apply bg-sage-400 dark:bg-sage-600 text-gray-900 dark:text-gray-100;
+  }
+}
+
+@layer components {
+  .neo-card {
+    @apply border-2 border-gray-900 dark:border-gray-100;
+    box-shadow: 4px 4px 0px currentColor;
+  }
+
+  .neo-card-sm {
+    @apply border-2 border-gray-900 dark:border-gray-100;
+    box-shadow: 3px 3px 0px currentColor;
+  }
+
+  .section-label {
+    @apply text-xs font-mono uppercase tracking-widest;
+  }
+}

@@ -84,7 +84,7 @@ export function Experience() {
                       whileInView={{ opacity: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: companyIndex * 0.2 + roleIndex * 0.1 }}
-                      className={`relative p-6 ${roleIndex !== company.roles.length - 1 ? 'border-b-2 border-gray-900 dark:border-gray-100' : ''} ${role.current ? 'bg-green-50 dark:bg-green-950' : 'bg-gray-100 dark:bg-gray-900'}`}
+                      className={`relative p-6 ${roleIndex !== company.roles.length - 1 ? 'border-b-2 border-gray-900 dark:border-gray-100' : ''} ${role.current ? 'bg-gray-100 dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-900'}`}
                     >
                       {role.current && (
                         <div className="absolute top-3 right-3 inline-flex items-center gap-1 px-3 py-1 bg-green-500 text-white text-xs font-mono uppercase tracking-wider rounded-full">

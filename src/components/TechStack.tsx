@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 
 const techStack = {
-  Languages: ['JavaScript (ES6+)', 'TypeScript', 'SQL'],
+  Languages: ['JavaScript (ES6+)', 'TypeScript', 'SQL', 'Python'],
   'Frameworks & Runtime': [
     'Node.js',
     'Express.js',

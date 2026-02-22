@@ -19,7 +19,7 @@ function App() {
       <Experience />
       <Education />
       <Projects />
-      <AIOverview />
+      {/* <AIOverview /> */}
       <Contact />
       <Footer />
     </div>

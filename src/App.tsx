@@ -15,7 +15,7 @@ function App() {
 
   useEffect(() => {
     (window as any).TrykConfig = {
-      widgetKey: 'tryk-1734728345850',
+      widgetKey: 'wgt_u4vbotw233',
       apiUrl: 'https://tryk-backend.onrender.com/api'
     };
     const s = document.createElement('script');

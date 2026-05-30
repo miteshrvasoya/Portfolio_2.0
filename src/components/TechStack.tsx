@@ -1,32 +1,47 @@
 import { motion } from 'framer-motion';
 
-const techStack = {
-  Languages: ['JavaScript (ES6+)', 'TypeScript', 'SQL', 'Python'],
-  'Frameworks & Runtime': [
-    'Node.js',
-    'Express.js',
-    'REST APIs',
-    'Microservices Architecture',
-    'API Gateway'
-  ],
-  Databases: [
-    'PostgreSQL',
-    'MongoDB',
-    'MySQL',
-    'Query Optimization',
-    'Connection Pooling'
-  ],
-  'Caching & Infra': ['Redis', 'Performance Tuning'],
-  'Payment Systems': [
-    'Paytm Integration',
-    'PhonePe Integration',
-    'Webhook Management',
-    'Idempotent Request Handling'
-  ],
-  'Frontend Exposure': ['React', 'Angular'],
-  'Dev Tools': ['Postman', 'Git', 'Jira'],
-  Monitoring: ['Sentry', 'Elasticsearch', 'Log Analysis']
-};
+const techCategories = [
+  {
+    label: 'Languages',
+    emoji: '⌨️',
+    items: ['JavaScript (ES6+)', 'TypeScript', 'SQL', 'Python'],
+  },
+  {
+    label: 'Backend & Runtime',
+    emoji: '⚙️',
+    items: ['Node.js', 'Express.js', 'REST API Design', 'Microservices Architecture'],
+  },
+  {
+    label: 'Databases',
+    emoji: '🗄️',
+    items: ['PostgreSQL', 'MongoDB', 'MySQL', 'Query Optimization', 'DB Performance Tuning'],
+  },
+  {
+    label: 'Infra & Queues',
+    emoji: '🔁',
+    items: ['Redis', 'BullMQ', 'Distributed Systems', 'Async Processing', 'Caching'],
+  },
+  {
+    label: 'Payment Systems',
+    emoji: '💳',
+    items: ['Cashfree', 'Paytm', 'Easebuzz', 'PhonePe', 'Webhook Handling', 'Idempotent APIs', 'Transaction Processing'],
+  },
+  {
+    label: 'Observability',
+    emoji: '📊',
+    items: ['Sentry', 'Logging', 'Error Tracking', 'Monitoring'],
+  },
+  {
+    label: 'Tools',
+    emoji: '🛠️',
+    items: ['Git', 'Postman', 'Jira'],
+  },
+  {
+    label: 'Frontend Exposure',
+    emoji: '🖥️',
+    items: ['React', 'Angular'],
+  },
+];
 
 export function TechStack() {
   return (
@@ -45,31 +60,38 @@ export function TechStack() {
           Technologies
         </motion.h2>
 
-        <div className="grid gap-8">
-          {Object.entries(techStack).map(([category, items], categoryIndex) => (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {techCategories.map((category, categoryIndex) => (
             <motion.div
-              key={category}
+              key={category.label}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: categoryIndex * 0.1 }}
+              transition={{ delay: categoryIndex * 0.08 }}
+              className="border-2 border-gray-900 dark:border-gray-100 bg-white dark:bg-gray-900 overflow-hidden"
+              style={{ boxShadow: '4px 4px 0px currentColor' }}
             >
-              <h3 className="text-xs font-mono uppercase tracking-widest mb-4 text-gray-900 dark:text-gray-100 font-semibold">
-                {category}
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {items.map((tech, index) => (
-                  <motion.div
+              {/* Category header */}
+              <div className="px-4 py-3 bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-900 dark:border-gray-100 flex items-center gap-2">
+                <span className="text-base">{category.emoji}</span>
+                <h3 className="text-xs font-mono uppercase tracking-widest text-gray-900 dark:text-gray-100 font-semibold">
+                  {category.label}
+                </h3>
+              </div>
+
+              {/* Items */}
+              <div className="p-4 flex flex-wrap gap-2">
+                {category.items.map((tech, index) => (
+                  <motion.span
                     key={tech}
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ delay: categoryIndex * 0.1 + index * 0.05 }}
-                    className="p-4 border-2 border-gray-900 dark:border-gray-100 bg-white dark:bg-gray-800 text-xs leading-relaxed font-semibold text-gray-900 dark:text-gray-100"
-                    style={{ boxShadow: '3px 3px 0px currentColor' }}
+                    transition={{ delay: categoryIndex * 0.08 + index * 0.04 }}
+                    className="px-2.5 py-1 border border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800 text-xs font-semibold text-gray-800 dark:text-gray-200"
                   >
                     {tech}
-                  </motion.div>
+                  </motion.span>
                 ))}
               </div>
             </motion.div>

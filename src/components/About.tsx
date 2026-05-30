@@ -2,11 +2,13 @@ import { motion } from 'framer-motion';
 
 const traits = [
   'Backend Focused',
-  'API Design',
-  'Payment Systems',
+  'Fintech & Payments',
+  'Idempotent APIs',
   'PostgreSQL Expert',
+  'Queue Systems (BullMQ)',
+  'Multi-Tenant Architecture',
+  'Fault-Tolerant Design',
   'Real-Time Systems',
-  'Multi-Tenant Architecture'
 ];
 
 export function About() {
@@ -26,19 +28,80 @@ export function About() {
           Who I Am
         </motion.h2>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          className="text-base md:text-lg mb-8 leading-relaxed text-gray-700 dark:text-gray-300"
-          style={{ fontFamily: 'JetBrains Mono, monospace' }}
-        >
-          I'm a Backend Engineer based in Ahmedabad, India, with 2+ years of experience architecting
-          mission-critical Node.js services. I specialize in payment gateway integrations, PostgreSQL
-          optimization, and building scalable multi-tenant platforms. I care deeply about fault tolerance,
-          clean API design, and systems that don't break under pressure.
-        </motion.p>
+        <div className="grid md:grid-cols-5 gap-8 mb-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="md:col-span-3 space-y-4"
+          >
+            <p
+              className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-300"
+              style={{ fontFamily: 'JetBrains Mono, monospace' }}
+            >
+              I'm a Backend Engineer based in Ahmedabad, India, with{' '}
+              <span className="font-bold text-gray-900 dark:text-gray-100">2.7 years</span> of
+              experience architecting mission-critical Node.js services for fintech applications.
+            </p>
+            <p
+              className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-300"
+              style={{ fontFamily: 'JetBrains Mono, monospace' }}
+            >
+              I specialize in{' '}
+              <span className="font-bold text-gray-900 dark:text-gray-100">
+                payment gateway integrations
+              </span>{' '}
+              (Cashfree, Paytm, Easebuzz, PhonePe), designing{' '}
+              <span className="font-bold text-gray-900 dark:text-gray-100">idempotent payout systems</span>,
+              and building scalable queue-based infrastructure with Redis &amp; BullMQ.
+            </p>
+            <p
+              className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-300"
+              style={{ fontFamily: 'JetBrains Mono, monospace' }}
+            >
+              I care deeply about{' '}
+              <span className="font-bold text-gray-900 dark:text-gray-100">fault tolerance</span>,
+              clean API design, PostgreSQL optimization, and systems that don't break under pressure.
+            </p>
+          </motion.div>
+
+          {/* Quick-facts sidebar */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="md:col-span-2 border-2 border-gray-900 dark:border-gray-100 p-5 bg-white dark:bg-gray-900 self-start"
+            style={{ boxShadow: '4px 4px 0px currentColor' }}
+          >
+            <p className="text-xs font-mono uppercase tracking-widest text-sage-700 dark:text-sage-300 mb-4">
+              Quick Facts
+            </p>
+            <ul className="space-y-3 text-sm font-mono text-gray-700 dark:text-gray-300">
+              <li className="flex gap-2">
+                <span className="text-sage-600 dark:text-sage-400 font-bold shrink-0">→</span>
+                Ahmedabad, India
+              </li>
+              <li className="flex gap-2">
+                <span className="text-sage-600 dark:text-sage-400 font-bold shrink-0">→</span>
+                Backend Engineer @ eVitalRx
+              </li>
+              <li className="flex gap-2">
+                <span className="text-sage-600 dark:text-sage-400 font-bold shrink-0">→</span>
+                Node.js · PostgreSQL · TypeScript
+              </li>
+              <li className="flex gap-2">
+                <span className="text-sage-600 dark:text-sage-400 font-bold shrink-0">→</span>
+                Fintech · Payments · APIs
+              </li>
+              <li className="flex gap-2">
+                <span className="text-sage-600 dark:text-sage-400 font-bold shrink-0">→</span>
+                BE Computer Engineering, GTU
+              </li>
+            </ul>
+          </motion.div>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -53,7 +116,7 @@ export function About() {
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.5 + index * 0.1 }}
+              transition={{ delay: 0.5 + index * 0.07 }}
               className="px-4 py-2 border-2 border-gray-900 dark:border-gray-100 text-xs uppercase tracking-widest font-semibold bg-white dark:bg-gray-800"
               style={{ boxShadow: '3px 3px 0px currentColor' }}
             >

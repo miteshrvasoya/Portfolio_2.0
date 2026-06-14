@@ -1,4 +1,7 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
+import { SectionHeading } from './SectionHeading';
+import { scaleIn, staggerContainer } from '../utils/motion';
 
 const techCategories = [
   {
@@ -44,51 +47,64 @@ const techCategories = [
 ];
 
 export function TechStack() {
-  return (
-    <section className="py-20 px-6 bg-gray-200 dark:bg-gray-800">
-      <div className="max-w-6xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold mb-12"
-          style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-        >
-          <span className="text-xs font-mono uppercase tracking-widest text-sage-700 dark:text-sage-300 block mb-3">
-            Tech Stack
-          </span>
-          Technologies
-        </motion.h2>
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '8%']);
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {techCategories.map((category, categoryIndex) => (
+  return (
+    <section ref={sectionRef} className="relative py-24 px-6 section-alt overflow-hidden">
+      <motion.div
+        style={{ y: bgY }}
+        className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
+        aria-hidden="true"
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)',
+            backgroundSize: '32px 32px',
+          }}
+        />
+      </motion.div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        <SectionHeading label="Tech Stack" title="Technologies" />
+
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          variants={staggerContainer}
+          className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+        >
+          {techCategories.map((category) => (
             <motion.div
               key={category.label}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: categoryIndex * 0.08 }}
-              className="border-2 border-gray-900 dark:border-gray-100 bg-white dark:bg-gray-900 overflow-hidden"
-              style={{ boxShadow: '4px 4px 0px currentColor' }}
+              variants={scaleIn}
+              whileHover={{ y: -6, boxShadow: '8px 8px 0px currentColor' }}
+              transition={{ duration: 0.25 }}
+              className="neo-card overflow-hidden bg-surface-elevated"
             >
-              {/* Category header */}
-              <div className="px-4 py-3 bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-900 dark:border-gray-100 flex items-center gap-2">
-                <span className="text-base">{category.emoji}</span>
-                <h3 className="text-xs font-mono uppercase tracking-widest text-gray-900 dark:text-gray-100 font-semibold">
-                  {category.label}
-                </h3>
+              <div className="px-4 py-3.5 bg-surface-muted border-b-2 border-gray-900 dark:border-gray-100 flex items-center gap-2">
+                <motion.span
+                  whileHover={{ rotate: [0, -10, 10, 0] }}
+                  transition={{ duration: 0.4 }}
+                  className="text-lg"
+                >
+                  {category.emoji}
+                </motion.span>
+                <h3 className="section-label text-content-primary font-semibold">{category.label}</h3>
               </div>
 
-              {/* Items */}
               <div className="p-4 flex flex-wrap gap-2">
-                {category.items.map((tech, index) => (
+                {category.items.map((tech) => (
                   <motion.span
                     key={tech}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: categoryIndex * 0.08 + index * 0.04 }}
-                    className="px-2.5 py-1 border border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800 text-xs font-semibold text-gray-800 dark:text-gray-200"
+                    whileHover={{ scale: 1.05, backgroundColor: 'var(--tw-gradient-from)' }}
+                    className="px-2.5 py-1 border border-gray-900 dark:border-gray-100 bg-surface text-body-sm font-medium text-content-secondary hover:bg-sage-100 dark:hover:bg-sage-900/50 transition-colors cursor-default"
                   >
                     {tech}
                   </motion.span>
@@ -96,7 +112,7 @@ export function TechStack() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -1,5 +1,8 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
 import { ChevronUp } from 'lucide-react';
+import { SectionHeading } from './SectionHeading';
+import { fadeUp, staggerContainer } from '../utils/motion';
 
 const experiences = [
   {
@@ -49,104 +52,100 @@ const experiences = [
 ];
 
 export function Experience() {
-  return (
-    <section id="experience" className="py-20 px-6">
-      <div className="max-w-5xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold mb-12"
-          style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-        >
-          <span className="text-xs font-mono uppercase tracking-widest text-sage-700 dark:text-sage-300 block mb-3">
-            Work History
-          </span>
-          Experience
-        </motion.h2>
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+  const timelineY = useTransform(scrollYProgress, [0, 1], [40, -40]);
 
-        <div className="space-y-8">
+  return (
+    <section id="experience" ref={sectionRef} className="relative py-24 px-6 overflow-hidden">
+      <motion.div
+        style={{ y: timelineY }}
+        className="absolute left-4 md:left-[calc(50%-2.5rem)] top-32 bottom-32 w-0.5 bg-sage-300/50 dark:bg-sage-700/50 hidden md:block"
+        aria-hidden="true"
+      />
+
+      <div className="max-w-5xl mx-auto relative z-10">
+        <SectionHeading label="Work History" title="Experience" />
+
+        <div className="space-y-10">
           {experiences.map((company, companyIndex) => (
             <motion.div
               key={company.company}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: companyIndex * 0.2 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ delay: companyIndex * 0.15, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -4 }}
+              className="neo-card overflow-hidden"
             >
-              <div
-                className="border-2 border-gray-900 dark:border-gray-100 overflow-hidden"
-                style={{ boxShadow: '4px 4px 0px currentColor' }}
-              >
-                {/* Company header */}
-                <div className="bg-sage-300 dark:bg-sage-800 px-6 py-4 border-b-2 border-gray-900 dark:border-gray-100">
-                  <h3
-                    className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100"
-                    style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              <div className="bg-sage-200 dark:bg-sage-800/80 px-6 py-5 border-b-2 border-gray-900 dark:border-gray-100">
+                <h3 className="font-display text-2xl md:text-3xl font-bold text-content-primary">
+                  {company.company}
+                </h3>
+                <p className="text-body-sm text-content-muted mt-1.5 font-mono uppercase tracking-wide">
+                  📍 {company.location}
+                </p>
+              </div>
+
+              <div className="relative">
+                {company.roles.map((role, roleIndex) => (
+                  <motion.div
+                    key={roleIndex}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={staggerContainer}
+                    className={`relative p-6 bg-surface ${
+                      roleIndex !== company.roles.length - 1
+                        ? 'border-b-2 border-gray-900 dark:border-gray-100'
+                        : ''
+                    }`}
                   >
-                    {company.company}
-                  </h3>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-1 font-mono uppercase tracking-wide">
-                    📍 {company.location}
-                  </p>
-                </div>
-
-                <div className="relative">
-                  {company.roles.map((role, roleIndex) => (
-                    <motion.div
-                      key={roleIndex}
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: companyIndex * 0.2 + roleIndex * 0.1 }}
-                      className={`relative p-6 bg-gray-100 dark:bg-gray-900 ${
-                        roleIndex !== company.roles.length - 1
-                          ? 'border-b-2 border-gray-900 dark:border-gray-100'
-                          : ''
-                      }`}
-                    >
-                      {role.current && (
-                        <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 bg-green-500 text-white text-xs font-mono uppercase tracking-wider rounded-full">
-                          <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                          Current
-                        </div>
-                      )}
-
-                      <div className="flex items-baseline gap-3 mb-3 pr-24">
-                        {roleIndex > 0 && (
-                          <ChevronUp
-                            className="text-sage-600 dark:text-sage-400 flex-shrink-0"
-                            size={16}
-                          />
-                        )}
-                        <h4
-                          className="text-lg font-bold text-gray-900 dark:text-gray-100"
-                          style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-                        >
-                          {role.title}
-                        </h4>
-                      </div>
-
-                      <div
-                        className="inline-block px-3 py-1 border border-gray-900 dark:border-gray-100 bg-white dark:bg-gray-800 font-mono text-xs uppercase tracking-wider mb-4"
-                        style={{ boxShadow: '2px 2px 0px currentColor' }}
+                    {role.current && (
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        whileInView={{ scale: 1, opacity: 1 }}
+                        viewport={{ once: true }}
+                        className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 bg-green-500 text-white text-xs font-mono uppercase tracking-wider rounded-full"
                       >
-                        {role.period}
-                      </div>
+                        <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse-soft" />
+                        Current
+                      </motion.div>
+                    )}
 
-                      <ul className="space-y-2">
-                        {role.bullets.map((bullet, bIndex) => (
-                          <li key={bIndex} className="flex gap-3 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
-                            <span className="text-sage-600 dark:text-sage-400 font-bold shrink-0 mt-0.5">
-                              ›
-                            </span>
-                            {bullet}
-                          </li>
-                        ))}
-                      </ul>
+                    <div className="flex items-baseline gap-3 mb-3 pr-24">
+                      {roleIndex > 0 && (
+                        <ChevronUp className="text-sage-600 dark:text-sage-400 flex-shrink-0" size={16} />
+                      )}
+                      <motion.h4 variants={fadeUp} className="text-lg font-display font-bold text-content-primary">
+                        {role.title}
+                      </motion.h4>
+                    </div>
+
+                    <motion.div
+                      variants={fadeUp}
+                      className="inline-block px-3 py-1 border border-gray-900 dark:border-gray-100 bg-surface-elevated font-mono text-xs uppercase tracking-wider mb-5 neo-card-sm"
+                    >
+                      {role.period}
                     </motion.div>
-                  ))}
-                </div>
+
+                    <ul className="space-y-3">
+                      {role.bullets.map((bullet, bIndex) => (
+                        <motion.li
+                          key={bIndex}
+                          variants={fadeUp}
+                          className="flex gap-3 text-body-sm leading-relaxed text-content-secondary font-body"
+                        >
+                          <span className="text-sage-600 dark:text-sage-400 font-bold shrink-0 mt-0.5">›</span>
+                          {bullet}
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
           ))}

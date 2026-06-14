@@ -1,6 +1,8 @@
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useState, useRef } from 'react';
 import { ExternalLink, Calendar, Clock, ArrowUpRight } from 'lucide-react';
+import { SectionHeading } from './SectionHeading';
+import { scaleIn, staggerContainer } from '../utils/motion';
 
 interface BlogPost {
   title: string;
@@ -30,67 +32,69 @@ const blogPosts: BlogPost[] = [
 
 export function Blog() {
   const [hoveredPost, setHoveredPost] = useState<string | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+  const decorY = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
   return (
-    <section id="blog" className="py-20 px-6 bg-gray-200 dark:bg-gray-800">
-      <div className="max-w-6xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold mb-4"
-          style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-        >
-          <span className="text-xs font-mono uppercase tracking-widest text-sage-700 dark:text-sage-300 block mb-3">
-            Blog
-          </span>
-          Writing &amp; Thoughts
-        </motion.h2>
+    <section id="blog" ref={sectionRef} className="relative py-24 px-6 overflow-hidden">
+      <motion.div
+        style={{ y: decorY }}
+        className="absolute left-8 bottom-20 opacity-30 pointer-events-none"
+        aria-hidden="true"
+      >
+        <div className="font-mono text-xs text-content-muted space-y-1">
+          <div>{'// writing'}</div>
+          <div>{'// systems'}</div>
+          <div>{'// lessons'}</div>
+        </div>
+      </motion.div>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-          className="text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mb-12 font-mono"
-        >
-          Deep dives into system design, architecture decisions, and lessons learned from building production systems.
-        </motion.p>
+      <div className="max-w-6xl mx-auto relative z-10">
+        <SectionHeading
+          label="Blog"
+          title="Writing & Thoughts"
+          description="Deep dives into system design, architecture decisions, and lessons learned from building production systems."
+        />
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogPosts.map((post, index) => (
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          variants={staggerContainer}
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {blogPosts.map((post) => (
             <motion.a
               key={post.title}
               href={post.url}
               target="_blank"
               rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="flex flex-col border-2 border-gray-900 dark:border-gray-100 bg-white dark:bg-gray-900 overflow-hidden group cursor-pointer"
-              style={{ boxShadow: '4px 4px 0px currentColor' }}
+              variants={scaleIn}
+              whileHover={{ y: -8, boxShadow: '8px 8px 0px currentColor' }}
+              className="flex flex-col neo-card bg-surface-elevated overflow-hidden group cursor-pointer"
               onMouseEnter={() => setHoveredPost(post.title)}
               onMouseLeave={() => setHoveredPost(null)}
             >
-              {/* Cover Image */}
               <div className="relative overflow-hidden border-b-2 border-gray-900 dark:border-gray-100">
-                <img
+                <motion.img
                   src={post.coverImage}
                   alt={post.title}
-                  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-48 object-cover"
+                  whileHover={{ scale: 1.08 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 />
-                {/* Platform badge */}
-                <span className="absolute top-3 right-3 px-2 py-1 border-2 border-gray-900 dark:border-gray-100 bg-sage-400 dark:bg-sage-600 font-mono text-xs uppercase tracking-wider text-gray-900 dark:text-gray-100">
+                <span className="absolute top-3 right-3 px-2 py-1 border-2 border-gray-900 dark:border-gray-100 bg-sage-400 dark:bg-sage-600 font-mono text-xs uppercase tracking-wider text-content-primary">
                   {post.platform}
                 </span>
               </div>
 
-              {/* Content */}
               <div className="relative flex-1 min-h-[180px] overflow-hidden">
                 <div className="p-6">
-                  {/* Meta info */}
-                  <div className="flex items-center gap-4 mb-3 text-xs font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <div className="flex items-center gap-4 mb-3 text-xs font-mono text-content-muted uppercase tracking-wider">
                     <span className="inline-flex items-center gap-1">
                       <Calendar size={12} aria-hidden />
                       {post.date}
@@ -101,14 +105,11 @@ export function Blog() {
                     </span>
                   </div>
 
-                  <h3
-                    className="text-lg font-bold mb-3 leading-snug group-hover:text-sage-600 dark:group-hover:text-sage-400 transition-colors"
-                    style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-                  >
+                  <h3 className="font-display text-lg font-bold mb-3 leading-snug text-content-primary group-hover:text-sage-600 dark:group-hover:text-sage-400 transition-colors">
                     {post.title}
                   </h3>
 
-                  <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                  <p className="text-body-sm text-content-secondary leading-relaxed mb-4 font-body">
                     {post.description}
                   </p>
 
@@ -116,7 +117,7 @@ export function Blog() {
                     {post.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 border border-gray-900 dark:border-gray-100 text-xs font-semibold bg-gray-100 dark:bg-gray-800"
+                        className="px-2 py-1 border border-gray-900 dark:border-gray-100 text-xs font-medium bg-surface-muted text-content-secondary"
                       >
                         {tag}
                       </span>
@@ -124,41 +125,38 @@ export function Blog() {
                   </div>
                 </div>
 
-                {/* Hover overlay */}
                 <motion.div
                   initial={{ y: '100%' }}
                   animate={{ y: hoveredPost === post.title ? 0 : '100%' }}
-                  transition={{ duration: 0.4 }}
-                  className="absolute inset-0 bg-sand-400 dark:bg-sand-700 border-t-2 border-gray-900 dark:border-gray-100 p-6 flex items-center justify-center"
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute inset-0 bg-sand-300 dark:bg-sand-700 border-t-2 border-gray-900 dark:border-gray-100 p-6 flex items-center justify-center"
                 >
                   <div className="text-center">
-                    <div className="w-14 h-14 mx-auto mb-4 border-2 border-gray-900 dark:border-gray-100 flex items-center justify-center bg-white dark:bg-gray-900">
-                      <ArrowUpRight size={24} className="text-gray-900 dark:text-gray-100" />
-                    </div>
-                    <p className="text-xs uppercase tracking-widest text-gray-900 dark:text-gray-100 font-semibold">
-                      Read Article
-                    </p>
-                    <p className="text-xs text-gray-700 dark:text-gray-200 mt-1 font-mono">
-                      on {post.platform}
-                    </p>
+                    <motion.div
+                      animate={hoveredPost === post.title ? { rotate: 45 } : { rotate: 0 }}
+                      className="w-14 h-14 mx-auto mb-4 border-2 border-gray-900 dark:border-gray-100 flex items-center justify-center bg-surface-elevated neo-card-sm"
+                    >
+                      <ArrowUpRight size={24} className="text-content-primary" />
+                    </motion.div>
+                    <p className="section-label text-content-primary font-semibold">Read Article</p>
+                    <p className="text-xs text-content-secondary mt-1 font-mono">on {post.platform}</p>
                   </div>
                 </motion.div>
               </div>
 
-              {/* Footer */}
-              <div className="border-t-2 border-gray-900 dark:border-gray-100 p-4 bg-white dark:bg-gray-900 flex items-center justify-between shrink-0">
-                <span className="inline-flex items-center gap-2 text-sm font-medium text-sage-700 dark:text-sage-300">
+              <div className="border-t-2 border-gray-900 dark:border-gray-100 p-4 bg-surface-elevated flex items-center justify-between shrink-0">
+                <span className="inline-flex items-center gap-2 text-body-sm font-medium text-sage-600 dark:text-sage-400">
                   <ExternalLink size={16} aria-hidden />
                   Read on {post.platform}
                 </span>
                 <ArrowUpRight
                   size={16}
-                  className="text-gray-500 dark:text-gray-400 group-hover:text-sage-600 dark:group-hover:text-sage-400 transition-colors group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transform duration-200"
+                  className="text-content-muted group-hover:text-sage-600 dark:group-hover:text-sage-400 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 duration-200"
                 />
               </div>
             </motion.a>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -4,6 +4,19 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+        body: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+      },
+      fontSize: {
+        'display-xl': ['clamp(3rem,8vw,5.5rem)', { lineHeight: '1.05', letterSpacing: '-0.03em', fontWeight: '700' }],
+        'display-lg': ['clamp(2.5rem,6vw,4rem)', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'display-md': ['clamp(2rem,4vw,3rem)', { lineHeight: '1.15', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'body-lg': ['1.125rem', { lineHeight: '1.75', letterSpacing: '0.01em' }],
+        'body-md': ['1rem', { lineHeight: '1.7', letterSpacing: '0.01em' }],
+        'body-sm': ['0.875rem', { lineHeight: '1.6', letterSpacing: '0.02em' }],
+      },
       colors: {
         sage: {
           100: '#E8F0E8',
@@ -26,6 +39,36 @@ export default {
           700: '#8F7A52',
           800: '#766342',
           900: '#5D4C32',
+        },
+        content: {
+          primary: 'rgb(var(--content-primary) / <alpha-value>)',
+          secondary: 'rgb(var(--content-secondary) / <alpha-value>)',
+          muted: 'rgb(var(--content-muted) / <alpha-value>)',
+        },
+        surface: {
+          DEFAULT: 'rgb(var(--surface) / <alpha-value>)',
+          elevated: 'rgb(var(--surface-elevated) / <alpha-value>)',
+          muted: 'rgb(var(--surface-muted) / <alpha-value>)',
+        },
+      },
+      animation: {
+        float: 'float 6s ease-in-out infinite',
+        'float-slow': 'float 8s ease-in-out infinite',
+        'pulse-soft': 'pulse-soft 3s ease-in-out infinite',
+        shimmer: 'shimmer 2.5s linear infinite',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-16px)' },
+        },
+        'pulse-soft': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.6' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
         },
       },
     },

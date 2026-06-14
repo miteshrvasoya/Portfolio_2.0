@@ -1,6 +1,8 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
 import { Download, Mail, Github, Linkedin, ArrowRight } from 'lucide-react';
+import { ParallaxBackground } from './ParallaxBackground';
+import { buttonHover, buttonTap, staggerContainer, fadeUp } from '../utils/motion';
 
 const subtitles = [
   'Backend Engineer',
@@ -16,8 +18,17 @@ const stats = [
   { value: '0', label: 'Duplicate Payments' },
 ];
 
+const name = 'Mitesh Vasoya';
+
 export function Hero() {
   const [currentSubtitle, setCurrentSubtitle] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  });
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -27,45 +38,64 @@ export function Hero() {
   }, []);
 
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    element?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center px-6 py-20">
-      <div className="max-w-5xl w-full">
-        {/* Availability badge */}
+    <section
+      ref={sectionRef}
+      className="relative min-h-screen flex items-center justify-center px-6 py-24 overflow-hidden"
+    >
+      <ParallaxBackground />
+
+      <motion.div
+        style={{ y: contentY, opacity: contentOpacity }}
+        className="relative max-w-5xl w-full z-10"
+      >
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="inline-flex items-center gap-2 px-3 py-1 border-2 border-gray-900 dark:border-gray-100 bg-white dark:bg-gray-800 font-mono text-xs uppercase tracking-widest mb-6"
-          style={{ boxShadow: '2px 2px 0px currentColor' }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 border-2 border-gray-900 dark:border-gray-100 bg-surface-elevated font-mono text-xs uppercase tracking-[0.15em] mb-8 neo-card-sm"
         >
-          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse-soft" />
           Open to opportunities
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-6xl md:text-7xl lg:text-8xl font-bold mb-4 text-gray-900 dark:text-gray-100"
-          style={{ fontFamily: 'Space Grotesk, sans-serif', letterSpacing: '-0.02em' }}
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="font-display text-display-xl text-content-primary mb-5"
         >
-          Mitesh Vasoya
+          {name.split('').map((char, i) => (
+            <motion.span
+              key={`${char}-${i}`}
+              variants={{
+                hidden: { opacity: 0, y: 40 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.5, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] },
+                },
+              }}
+              className="inline-block"
+              style={{ whiteSpace: char === ' ' ? 'pre' : undefined }}
+            >
+              {char === ' ' ? '\u00A0' : char}
+            </motion.span>
+          ))}
         </motion.h1>
 
-        <div className="h-12 mb-6">
+        <div className="h-14 mb-8">
           <AnimatePresence mode="wait">
             <motion.p
               key={currentSubtitle}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.4 }}
-              className="text-2xl md:text-3xl font-bold text-sage-700 dark:text-sage-300"
-              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -16, filter: 'blur(4px)' }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="font-display text-2xl md:text-3xl font-semibold text-sage-600 dark:text-sage-400"
             >
               {subtitles[currentSubtitle]}
             </motion.p>
@@ -73,107 +103,126 @@ export function Hero() {
         </div>
 
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-base md:text-lg mb-10 max-w-2xl text-gray-700 dark:text-gray-300 leading-relaxed"
-          style={{ fontFamily: 'JetBrains Mono, monospace' }}
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.4 }}
+          className="prose-body mb-12 max-w-2xl"
         >
           Backend Engineer with 2.7 years building fault-tolerant fintech systems —
           payment gateways, idempotent APIs, and queue-based payout infrastructure
           processing millions in real transactions.
         </motion.p>
 
-        {/* Stats Bar */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.35 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-0 mb-10 border-2 border-gray-900 dark:border-gray-100 overflow-hidden"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="grid grid-cols-2 md:grid-cols-4 gap-0 mb-12 border-2 border-gray-900 dark:border-gray-100 overflow-hidden neo-card"
           style={{ boxShadow: '4px 4px 0px currentColor' }}
         >
           {stats.map((stat, index) => (
-            <div
+            <motion.div
               key={stat.label}
-              className={`px-5 py-4 bg-white dark:bg-gray-900 text-center ${
+              variants={fadeUp}
+              className={`px-5 py-5 bg-surface-elevated text-center ${
                 index < stats.length - 1
                   ? 'border-r-2 border-b-2 md:border-b-0 border-gray-900 dark:border-gray-100'
                   : 'border-b-2 md:border-b-0'
               } ${index >= 2 ? 'border-b-0' : ''}`}
             >
-              <div
-                className="text-2xl md:text-3xl font-bold text-sage-700 dark:text-sage-300"
-                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.6 + index * 0.1, type: 'spring', stiffness: 200 }}
+                className="font-display text-2xl md:text-3xl font-bold text-sage-600 dark:text-sage-400"
               >
                 {stat.value}
-              </div>
-              <div className="text-xs font-mono uppercase tracking-widest text-gray-500 dark:text-gray-400 mt-1">
+              </motion.div>
+              <div className="text-xs font-mono uppercase tracking-[0.15em] text-content-muted mt-1.5">
                 {stat.label}
               </div>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
 
-        {/* CTA Buttons */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
           className="flex flex-wrap gap-4 items-center"
         >
-          <button
+          <motion.button
+            variants={fadeUp}
+            whileHover={buttonHover}
+            whileTap={buttonTap}
             onClick={() => scrollToSection('projects')}
-            className="px-6 py-3 border-2 border-gray-900 dark:border-gray-100 font-mono text-sm uppercase tracking-wider font-semibold bg-sage-400 dark:bg-sage-600 text-gray-900 dark:text-gray-100 hover:bg-sage-500 dark:hover:bg-sage-700 transition-all flex items-center gap-2"
-            style={{ boxShadow: '4px 4px 0px currentColor' }}
+            className="btn-neo bg-sage-400 dark:bg-sage-600 text-gray-900 dark:text-gray-100 hover:bg-sage-500 dark:hover:bg-sage-700 flex items-center gap-2"
           >
             View Projects
             <ArrowRight size={16} />
-          </button>
+          </motion.button>
 
-          <a
+          <motion.a
+            variants={fadeUp}
+            whileHover={buttonHover}
+            whileTap={buttonTap}
             href="/Mitesh_Vasoya_Software_Engineer_Resume.pdf"
             download
-            className="px-6 py-3 border-2 border-gray-900 dark:border-gray-100 font-mono text-sm uppercase tracking-wider font-semibold bg-white dark:bg-gray-800 hover:bg-sand-200 dark:hover:bg-sand-800 transition-all flex items-center gap-2"
-            style={{ boxShadow: '4px 4px 0px currentColor' }}
+            className="btn-neo bg-surface-elevated hover:bg-sand-200 dark:hover:bg-sand-800 flex items-center gap-2"
           >
             <Download size={16} />
             Resume
-          </a>
+          </motion.a>
 
-          <button
+          <motion.button
+            variants={fadeUp}
+            whileHover={buttonHover}
+            whileTap={buttonTap}
             onClick={() => scrollToSection('contact')}
-            className="px-6 py-3 border-2 border-gray-900 dark:border-gray-100 font-mono text-sm uppercase tracking-wider font-semibold bg-white dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all flex items-center gap-2"
-            style={{ boxShadow: '4px 4px 0px currentColor' }}
+            className="btn-neo bg-surface-elevated hover:bg-surface-muted flex items-center gap-2"
           >
             <Mail size={16} />
             Contact
-          </button>
+          </motion.button>
 
-          {/* Social icons */}
-          <div className="flex gap-3 ml-auto">
-            <a
-              href="https://github.com/miteshrvasoya"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-              className="w-11 h-11 border-2 border-gray-900 dark:border-gray-100 flex items-center justify-center hover:bg-sage-200 dark:hover:bg-sage-800 transition-colors"
-              style={{ boxShadow: '3px 3px 0px currentColor' }}
-            >
-              <Github size={18} />
-            </a>
-            <a
-              href="https://linkedin.com/in/mitesh-vasoya"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-              className="w-11 h-11 border-2 border-gray-900 dark:border-gray-100 flex items-center justify-center hover:bg-sage-200 dark:hover:bg-sage-800 transition-colors"
-              style={{ boxShadow: '3px 3px 0px currentColor' }}
-            >
-              <Linkedin size={18} />
-            </a>
-          </div>
+          <motion.div variants={fadeUp} className="flex gap-3 ml-auto">
+            {[
+              { href: 'https://github.com/miteshrvasoya', icon: Github, label: 'GitHub' },
+              { href: 'https://linkedin.com/in/mitesh-vasoya', icon: Linkedin, label: 'LinkedIn' },
+            ].map(({ href, icon: Icon, label }) => (
+              <motion.a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                whileHover={{ scale: 1.08, y: -3 }}
+                whileTap={buttonTap}
+                className="w-11 h-11 border-2 border-gray-900 dark:border-gray-100 flex items-center justify-center bg-surface-elevated hover:bg-sage-200 dark:hover:bg-sage-800 transition-colors neo-card-sm"
+              >
+                <Icon size={18} />
+              </motion.a>
+            ))}
+          </motion.div>
         </motion.div>
-      </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      >
+        <span className="text-xs font-mono uppercase tracking-[0.2em] text-content-muted">Scroll</span>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          className="w-5 h-8 border-2 border-gray-900/40 dark:border-gray-100/40 rounded-full flex justify-center pt-1.5"
+        >
+          <div className="w-1 h-2 bg-sage-500 dark:bg-sage-400 rounded-full" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

@@ -6,9 +6,9 @@ import { Experience } from './components/Experience';
 import { Education } from './components/Education';
 import { Projects } from './components/Projects';
 import { Blog } from './components/Blog';
-import { AIOverview } from './components/AIOverview';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
+import { ScrollProgress } from './components/ScrollProgress';
 import { useEffect } from 'react';
 
 function App() {
@@ -25,7 +25,8 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
+    <div className="min-h-screen bg-surface text-content-primary transition-colors duration-300">
+      <ScrollProgress />
       <Navigation />
       <Hero />
       <About />

@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion';
 import { GraduationCap } from 'lucide-react';
+import { SectionHeading } from './SectionHeading';
+import { fadeUp, staggerContainer } from '../utils/motion';
 
 const education = [
   {
-    degree: "Bachelor of Engineering",
+    degree: 'Bachelor of Engineering',
     field: 'Computer Engineering',
     institution: 'Gujarat Technological University',
     period: '2019 – 2023',
@@ -15,83 +17,68 @@ const education = [
 
 export function Education() {
   return (
-    <section className="py-20 px-6 bg-gray-200 dark:bg-gray-800">
+    <section className="py-24 px-6 overflow-hidden">
       <div className="max-w-5xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold mb-12"
-          style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-        >
-          <span className="text-xs font-mono uppercase tracking-widest text-sage-700 dark:text-sage-300 block mb-3">
-            Academics
-          </span>
-          Education
-        </motion.h2>
+        <SectionHeading label="Academics" title="Education" />
 
         <div className="space-y-6">
-          {education.map((edu, index) => (
+          {education.map((edu) => (
             <motion.div
               key={edu.institution}
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.15 }}
-              className="border-2 border-gray-900 dark:border-gray-100 overflow-hidden bg-gray-100 dark:bg-gray-900"
-              style={{ boxShadow: '4px 4px 0px currentColor' }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -4, boxShadow: '6px 6px 0px currentColor' }}
+              className="neo-card overflow-hidden bg-surface"
             >
-              {/* Header row */}
-              <div className="flex items-start gap-4 p-6 border-b-2 border-gray-900 dark:border-gray-100 bg-sage-100 dark:bg-sage-900">
-                <div className="p-3 bg-sage-300 dark:bg-sage-700 border-2 border-gray-900 dark:border-gray-100 shrink-0">
-                  <GraduationCap className="text-gray-900 dark:text-gray-100" size={24} />
-                </div>
-                <div className="flex-1">
-                  <h3
-                    className="text-xl font-bold text-gray-900 dark:text-gray-100"
-                    style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-                  >
-                    {edu.degree}
-                  </h3>
-                  <p className="text-sm font-semibold text-sage-700 dark:text-sage-300 mt-1">
-                    {edu.field}
-                  </p>
-                </div>
-                <div
-                  className="shrink-0 px-3 py-1 border-2 border-gray-900 dark:border-gray-100 bg-white dark:bg-gray-800 font-mono text-xs font-bold text-sage-700 dark:text-sage-300 uppercase tracking-wider"
-                  style={{ boxShadow: '2px 2px 0px currentColor' }}
+              <div className="flex items-start gap-4 p-6 border-b-2 border-gray-900 dark:border-gray-100 bg-sage-100 dark:bg-sage-900/40">
+                <motion.div
+                  whileHover={{ rotate: 10, scale: 1.05 }}
+                  className="p-3 bg-sage-300 dark:bg-sage-700 border-2 border-gray-900 dark:border-gray-100 shrink-0 neo-card-sm"
                 >
+                  <GraduationCap className="text-content-primary" size={24} />
+                </motion.div>
+                <div className="flex-1">
+                  <h3 className="font-display text-xl font-bold text-content-primary">{edu.degree}</h3>
+                  <p className="text-body-sm font-semibold text-sage-600 dark:text-sage-400 mt-1">{edu.field}</p>
+                </div>
+                <div className="shrink-0 px-3 py-1 border-2 border-gray-900 dark:border-gray-100 bg-surface-elevated font-mono text-xs font-bold text-sage-600 dark:text-sage-400 uppercase tracking-wider neo-card-sm">
                   {edu.details}
                 </div>
               </div>
 
-              {/* Details row */}
               <div className="p-6">
                 <div className="flex flex-wrap gap-3 mb-5">
-                  <span
-                    className="px-3 py-1 border border-gray-900 dark:border-gray-100 bg-white dark:bg-gray-800 font-mono text-xs uppercase tracking-wider"
-                    style={{ boxShadow: '2px 2px 0px currentColor' }}
-                  >
+                  <span className="px-3 py-1 border border-gray-900 dark:border-gray-100 bg-surface-elevated font-mono text-xs uppercase tracking-wider neo-card-sm">
                     {edu.institution}
                   </span>
-                  <span className="px-3 py-1 font-mono text-xs uppercase tracking-wider text-gray-600 dark:text-gray-400">
+                  <span className="px-3 py-1 font-mono text-xs uppercase tracking-wider text-content-muted">
                     📍 {edu.location}
                   </span>
-                  <span className="px-3 py-1 font-mono text-xs uppercase tracking-wider text-gray-600 dark:text-gray-400">
+                  <span className="px-3 py-1 font-mono text-xs uppercase tracking-wider text-content-muted">
                     🗓 {edu.period}
                   </span>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <motion.div
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={staggerContainer}
+                  className="flex flex-wrap gap-2"
+                >
                   {edu.highlights.map((h) => (
-                    <span
+                    <motion.span
                       key={h}
-                      className="px-2.5 py-1 border border-gray-900 dark:border-gray-100 bg-white dark:bg-gray-800 text-xs font-semibold"
+                      variants={fadeUp}
+                      whileHover={{ scale: 1.05 }}
+                      className="px-2.5 py-1 border border-gray-900 dark:border-gray-100 bg-surface-elevated text-body-sm font-medium text-content-secondary"
                     >
                       {h}
-                    </span>
+                    </motion.span>
                   ))}
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           ))}

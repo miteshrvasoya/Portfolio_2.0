@@ -1,74 +1,53 @@
 /** @type {import('tailwindcss').Config} */
+const token = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
-        body: ['"DM Sans"', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       fontSize: {
-        'display-xl': ['clamp(3rem,8vw,5.5rem)', { lineHeight: '1.05', letterSpacing: '-0.03em', fontWeight: '700' }],
-        'display-lg': ['clamp(2.5rem,6vw,4rem)', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '700' }],
-        'display-md': ['clamp(2rem,4vw,3rem)', { lineHeight: '1.15', letterSpacing: '-0.02em', fontWeight: '700' }],
-        'body-lg': ['1.125rem', { lineHeight: '1.75', letterSpacing: '0.01em' }],
-        'body-md': ['1rem', { lineHeight: '1.7', letterSpacing: '0.01em' }],
-        'body-sm': ['0.875rem', { lineHeight: '1.6', letterSpacing: '0.02em' }],
+        'display-xl': ['clamp(2.5rem,7vw,4.75rem)', { lineHeight: '1.02', letterSpacing: '-0.04em', fontWeight: '800' }],
+        'display-md': ['clamp(1.75rem,3.6vw,2.5rem)', { lineHeight: '1.15', letterSpacing: '-0.03em', fontWeight: '700' }],
       },
       colors: {
-        sage: {
-          100: '#E8F0E8',
-          200: '#D1E1D1',
-          300: '#B5CDB5',
-          400: '#7A9E7E',
-          500: '#6B8E6F',
-          600: '#5C7D60',
-          700: '#4D6D51',
-          800: '#3E5D42',
-          900: '#2F4D33',
-        },
-        sand: {
-          100: '#F5F0E8',
-          200: '#E8DECC',
-          300: '#D6C9B0',
-          400: '#C9B99A',
-          500: '#BCA97E',
-          600: '#A89162',
-          700: '#8F7A52',
-          800: '#766342',
-          900: '#5D4C32',
-        },
         content: {
-          primary: 'rgb(var(--content-primary) / <alpha-value>)',
-          secondary: 'rgb(var(--content-secondary) / <alpha-value>)',
-          muted: 'rgb(var(--content-muted) / <alpha-value>)',
+          primary: token('content-primary'),
+          secondary: token('content-secondary'),
+          muted: token('content-muted'),
         },
         surface: {
-          DEFAULT: 'rgb(var(--surface) / <alpha-value>)',
-          elevated: 'rgb(var(--surface-elevated) / <alpha-value>)',
-          muted: 'rgb(var(--surface-muted) / <alpha-value>)',
+          DEFAULT: token('surface'),
+          elevated: token('surface-elevated'),
+          muted: token('surface-muted'),
+        },
+        line: token('line'),
+        syn: {
+          green: token('syn-green'),
+          blue: token('syn-blue'),
+          purple: token('syn-purple'),
+          orange: token('syn-orange'),
+          red: token('syn-red'),
+          yellow: token('syn-yellow'),
+          string: token('syn-string'),
         },
       },
       animation: {
-        float: 'float 6s ease-in-out infinite',
-        'float-slow': 'float 8s ease-in-out infinite',
-        'pulse-soft': 'pulse-soft 3s ease-in-out infinite',
-        shimmer: 'shimmer 2.5s linear infinite',
+        blink: 'blink 1.1s steps(1) infinite',
+        'pulse-dot': 'pulse-dot 2s ease-in-out infinite',
       },
       keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-16px)' },
+        blink: {
+          '0%, 50%': { opacity: '1' },
+          '50.01%, 100%': { opacity: '0' },
         },
-        'pulse-soft': {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.6' },
-        },
-        shimmer: {
-          '0%': { backgroundPosition: '-200% 0' },
-          '100%': { backgroundPosition: '200% 0' },
+        'pulse-dot': {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.45', transform: 'scale(0.85)' },
         },
       },
     },

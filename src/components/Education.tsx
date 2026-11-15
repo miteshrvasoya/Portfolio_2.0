@@ -1,89 +1,56 @@
 import { motion } from 'framer-motion';
 import { GraduationCap } from 'lucide-react';
-import { SectionHeading } from './SectionHeading';
-import { fadeUp, staggerContainer } from '../utils/motion';
-
-const education = [
-  {
-    degree: 'Bachelor of Engineering',
-    field: 'Computer Engineering',
-    institution: 'Gujarat Technological University',
-    period: '2019 – 2023',
-    location: 'Surat, Gujarat',
-    details: 'CGPA: 8.38 / 10',
-    highlights: ['Core CS Fundamentals', 'DBMS & Networks', 'Data Structures & Algorithms'],
-  },
-];
+import { education } from '../data/portfolio';
 
 export function Education() {
   return (
-    <section className="py-24 px-6 overflow-hidden">
-      <div className="max-w-5xl mx-auto">
-        <SectionHeading label="Academics" title="Education" />
-
-        <div className="space-y-6">
-          {education.map((edu) => (
-            <motion.div
-              key={edu.institution}
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -4, boxShadow: '6px 6px 0px currentColor' }}
-              className="neo-card overflow-hidden bg-surface"
-            >
-              <div className="flex items-start gap-4 p-6 border-b-2 border-gray-900 dark:border-gray-100 bg-sage-100 dark:bg-sage-900/40">
-                <motion.div
-                  whileHover={{ rotate: 10, scale: 1.05 }}
-                  className="p-3 bg-sage-300 dark:bg-sage-700 border-2 border-gray-900 dark:border-gray-100 shrink-0 neo-card-sm"
-                >
-                  <GraduationCap className="text-content-primary" size={24} />
-                </motion.div>
-                <div className="flex-1">
-                  <h3 className="font-display text-xl font-bold text-content-primary">{edu.degree}</h3>
-                  <p className="text-body-sm font-semibold text-sage-600 dark:text-sage-400 mt-1">{edu.field}</p>
-                </div>
-                <div className="shrink-0 px-3 py-1 border-2 border-gray-900 dark:border-gray-100 bg-surface-elevated font-mono text-xs font-bold text-sage-600 dark:text-sage-400 uppercase tracking-wider neo-card-sm">
-                  {edu.details}
-                </div>
-              </div>
-
-              <div className="p-6">
-                <div className="flex flex-wrap gap-3 mb-5">
-                  <span className="px-3 py-1 border border-gray-900 dark:border-gray-100 bg-surface-elevated font-mono text-xs uppercase tracking-wider neo-card-sm">
-                    {edu.institution}
-                  </span>
-                  <span className="px-3 py-1 font-mono text-xs uppercase tracking-wider text-content-muted">
-                    📍 {edu.location}
-                  </span>
-                  <span className="px-3 py-1 font-mono text-xs uppercase tracking-wider text-content-muted">
-                    🗓 {edu.period}
-                  </span>
-                </div>
-
-                <motion.div
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={staggerContainer}
-                  className="flex flex-wrap gap-2"
-                >
-                  {edu.highlights.map((h) => (
-                    <motion.span
-                      key={h}
-                      variants={fadeUp}
-                      whileHover={{ scale: 1.05 }}
-                      className="px-2.5 py-1 border border-gray-900 dark:border-gray-100 bg-surface-elevated text-body-sm font-medium text-content-secondary"
-                    >
-                      {h}
-                    </motion.span>
-                  ))}
-                </motion.div>
-              </div>
-            </motion.div>
-          ))}
+    <section className="px-4 pb-20 sm:px-6 md:pb-28">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-60px' }}
+        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        className="panel mx-auto max-w-6xl overflow-hidden"
+      >
+        <div className="panel-header">
+          <GraduationCap size={14} className="text-syn-orange" />
+          <span>education.yml</span>
         </div>
-      </div>
+        <div className="grid gap-6 p-5 sm:p-6 md:grid-cols-[1fr_auto] md:items-center">
+          <div className="font-mono text-sm leading-7">
+            <div>
+              <span className="text-syn-blue">degree</span>
+              <span className="text-content-muted">: </span>
+              <span className="font-sans text-lg font-semibold text-content-primary">{education.degree}</span>
+            </div>
+            <div>
+              <span className="text-syn-blue">school</span>
+              <span className="text-content-muted">: </span>
+              <span className="text-content-secondary">{education.institution}</span>
+            </div>
+            <div>
+              <span className="text-syn-blue">when</span>
+              <span className="text-content-muted">: </span>
+              <span className="text-content-secondary">
+                {education.period} · {education.location}
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 pt-2">
+              <span className="text-syn-blue">focus</span>
+              <span className="text-content-muted">:</span>
+              {education.coursework.map((c) => (
+                <span key={c} className="chip">
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-lg border border-syn-green/40 bg-syn-green/10 px-5 py-4 text-center font-mono">
+            <div className="text-2xl font-bold text-syn-green">8.38</div>
+            <div className="text-xs text-content-muted">/ 10 CGPA</div>
+          </div>
+        </div>
+      </motion.div>
     </section>
   );
 }

@@ -1,228 +1,266 @@
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
-import { Download, Mail, Github, Linkedin, ArrowRight } from 'lucide-react';
-import { ParallaxBackground } from './ParallaxBackground';
-import { buttonHover, buttonTap, staggerContainer, fadeUp } from '../utils/motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { ArrowRight, Download, Github, Linkedin, Mail } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { profile, roles, stats } from '../data/portfolio';
+import { WindowDots } from './SectionHeading';
 
-const subtitles = [
-  'Backend Engineer',
-  'Fintech Systems Builder',
-  'Payment Infrastructure',
-  'Distributed Systems',
+type Line = { cmd: string; out: React.ReactNode };
+
+const session: Line[] = [
+  {
+    cmd: 'whoami',
+    out: (
+      <>
+        <span className="text-content-primary">mitesh vasoya</span>
+        <span className="text-content-muted"> — software engineer @ </span>
+        <span className="text-syn-purple">eVitalRx</span>
+      </>
+    ),
+  },
+  {
+    cmd: 'cat focus.json',
+    out: (
+      <pre className="whitespace-pre-wrap leading-relaxed">
+        <span className="text-content-muted">{'{'}</span>
+        {'\n  '}
+        <span className="text-syn-blue">"day_job"</span>
+        <span className="text-content-muted">: </span>
+        <span className="text-syn-string">"payment infra"</span>
+        <span className="text-content-muted">,</span>
+        {'\n  '}
+        <span className="text-syn-blue">"side_project"</span>
+        <span className="text-content-muted">: </span>
+        <span className="text-syn-string">"tryk.in"</span>
+        <span className="text-content-muted">,</span>
+        {'\n  '}
+        <span className="text-syn-blue">"duplicate_payouts"</span>
+        <span className="text-content-muted">: </span>
+        <span className="text-syn-orange">0</span>
+        {'\n'}
+        <span className="text-content-muted">{'}'}</span>
+      </pre>
+    ),
+  },
+  {
+    cmd: 'git log --oneline | wc -l',
+    out: <span className="text-syn-green">2.7 years of shipped commits ✓</span>,
+  },
 ];
 
-const stats = [
-  { value: '₹4Cr+', label: 'Disbursed' },
-  { value: '2.7', label: 'Yrs Experience' },
-  { value: '4', label: 'Payment Gateways' },
-  { value: '0', label: 'Duplicate Payments' },
-];
-
-const name = 'Mitesh Vasoya';
-
-export function Hero() {
-  const [currentSubtitle, setCurrentSubtitle] = useState(0);
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end start'],
-  });
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+function TerminalSession() {
+  const reduce = useReducedMotion();
+  const [lineIdx, setLineIdx] = useState(reduce ? session.length : 0);
+  const [typed, setTyped] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSubtitle((prev) => (prev + 1) % subtitles.length);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
+    if (reduce || lineIdx >= session.length) return;
+    const cmd = session[lineIdx].cmd;
+    if (typed < cmd.length) {
+      const t = setTimeout(() => setTyped((n) => n + 1), 45 + Math.random() * 55);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(() => {
+      setLineIdx((i) => i + 1);
+      setTyped(0);
+    }, 650);
+    return () => clearTimeout(t);
+  }, [lineIdx, typed, reduce]);
 
-  const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const prompt = (
+    <>
+      <span className="text-syn-green">➜</span> <span className="text-syn-blue">~</span>{' '}
+    </>
+  );
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center px-6 py-24 overflow-hidden"
-    >
-      <ParallaxBackground />
-
-      <motion.div
-        style={{ y: contentY, opacity: contentOpacity }}
-        className="relative max-w-5xl w-full z-10"
-      >
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 border-2 border-gray-900 dark:border-gray-100 bg-surface-elevated font-mono text-xs uppercase tracking-[0.15em] mb-8 neo-card-sm"
-        >
-          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse-soft" />
-          Open to opportunities
-        </motion.div>
-
-        <motion.h1
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="font-display text-display-xl text-content-primary mb-5"
-        >
-          {name.split('').map((char, i) => (
-            <motion.span
-              key={`${char}-${i}`}
-              variants={{
-                hidden: { opacity: 0, y: 40 },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  transition: { duration: 0.5, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] },
-                },
-              }}
-              className="inline-block"
-              style={{ whiteSpace: char === ' ' ? 'pre' : undefined }}
-            >
-              {char === ' ' ? '\u00A0' : char}
-            </motion.span>
-          ))}
-        </motion.h1>
-
-        <div className="h-14 mb-8">
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={currentSubtitle}
-              initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -16, filter: 'blur(4px)' }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display text-2xl md:text-3xl font-semibold text-sage-600 dark:text-sage-400"
-            >
-              {subtitles[currentSubtitle]}
-            </motion.p>
-          </AnimatePresence>
-        </div>
-
-        <motion.p
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.4 }}
-          className="prose-body mb-12 max-w-2xl"
-        >
-          Backend Engineer with 2.7 years building fault-tolerant fintech systems —
-          payment gateways, idempotent APIs, and queue-based payout infrastructure
-          processing millions in real transactions.
-        </motion.p>
-
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="grid grid-cols-2 md:grid-cols-4 gap-0 mb-12 border-2 border-gray-900 dark:border-gray-100 overflow-hidden neo-card"
-          style={{ boxShadow: '4px 4px 0px currentColor' }}
-        >
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              variants={fadeUp}
-              className={`px-5 py-5 bg-surface-elevated text-center ${
-                index < stats.length - 1
-                  ? 'border-r-2 border-b-2 md:border-b-0 border-gray-900 dark:border-gray-100'
-                  : 'border-b-2 md:border-b-0'
-              } ${index >= 2 ? 'border-b-0' : ''}`}
-            >
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.6 + index * 0.1, type: 'spring', stiffness: 200 }}
-                className="font-display text-2xl md:text-3xl font-bold text-sage-600 dark:text-sage-400"
-              >
-                {stat.value}
-              </motion.div>
-              <div className="text-xs font-mono uppercase tracking-[0.15em] text-content-muted mt-1.5">
-                {stat.label}
+    <div className="panel overflow-hidden">
+      <div className="panel-header">
+        <WindowDots />
+        <span className="mx-auto">mitesh — zsh — 80×24</span>
+      </div>
+      <div className="min-h-[300px] space-y-3 p-5 font-mono text-[0.8rem] leading-relaxed sm:text-sm">
+        {session.map((line, i) => {
+          if (i > lineIdx) return null;
+          const done = i < lineIdx;
+          return (
+            <div key={line.cmd}>
+              <div className="text-content-primary">
+                {prompt}
+                {done ? line.cmd : line.cmd.slice(0, typed)}
+                {!done && <span className="ml-0.5 inline-block h-4 w-2 translate-y-0.5 animate-blink bg-content-primary" />}
               </div>
-            </motion.div>
-          ))}
-        </motion.div>
+              <AnimatePresence>
+                {done && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-1 text-content-secondary"
+                  >
+                    {line.out}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
+        {lineIdx >= session.length && (
+          <div className="text-content-primary">
+            {prompt}
+            <span className="inline-block h-4 w-2 translate-y-0.5 animate-blink bg-content-primary" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="flex flex-wrap gap-4 items-center"
-        >
-          <motion.button
-            variants={fadeUp}
-            whileHover={buttonHover}
-            whileTap={buttonTap}
-            onClick={() => scrollToSection('projects')}
-            className="btn-neo bg-sage-400 dark:bg-sage-600 text-gray-900 dark:text-gray-100 hover:bg-sage-500 dark:hover:bg-sage-700 flex items-center gap-2"
-          >
-            View Projects
-            <ArrowRight size={16} />
-          </motion.button>
+export function Hero() {
+  const [roleIdx, setRoleIdx] = useState(0);
 
+  useEffect(() => {
+    const i = setInterval(() => setRoleIdx((r) => (r + 1) % roles.length), 2600);
+    return () => clearInterval(i);
+  }, []);
+
+  const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+
+  return (
+    <section className="relative overflow-hidden px-4 pb-20 pt-12 sm:px-6 md:pb-28 md:pt-20">
+      <div
+        className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black_20%,transparent_70%)]"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[780px] -translate-x-1/2 rounded-full bg-syn-blue/10 blur-3xl"
+        aria-hidden="true"
+      />
+
+      <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+        <div>
           <motion.a
-            variants={fadeUp}
-            whileHover={buttonHover}
-            whileTap={buttonTap}
-            href="/Mitesh_Vasoya_Software_Engineer_Resume.pdf"
-            download
-            className="btn-neo bg-surface-elevated hover:bg-sand-200 dark:hover:bg-sand-800 flex items-center gap-2"
+            href="#contact"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 inline-flex items-center gap-2 rounded-full border border-line bg-surface-elevated px-3 py-1.5 font-mono text-xs text-content-secondary hover:border-syn-green/60"
           >
-            <Download size={16} />
-            Resume
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-syn-green opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-syn-green" />
+            </span>
+            status: open to opportunities
           </motion.a>
 
-          <motion.button
-            variants={fadeUp}
-            whileHover={buttonHover}
-            whileTap={buttonTap}
-            onClick={() => scrollToSection('contact')}
-            className="btn-neo bg-surface-elevated hover:bg-surface-muted flex items-center gap-2"
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="mb-3 font-mono text-sm text-syn-purple"
           >
-            <Mail size={16} />
-            Contact
-          </motion.button>
+            {'// hello, world. i\'m'}
+          </motion.p>
 
-          <motion.div variants={fadeUp} className="flex gap-3 ml-auto">
-            {[
-              { href: 'https://github.com/miteshrvasoya', icon: Github, label: 'GitHub' },
-              { href: 'https://linkedin.com/in/mitesh-vasoya', icon: Linkedin, label: 'LinkedIn' },
-            ].map(({ href, icon: Icon, label }) => (
-              <motion.a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                whileHover={{ scale: 1.08, y: -3 }}
-                whileTap={buttonTap}
-                className="w-11 h-11 border-2 border-gray-900 dark:border-gray-100 flex items-center justify-center bg-surface-elevated hover:bg-sage-200 dark:hover:bg-sage-800 transition-colors neo-card-sm"
-              >
-                <Icon size={18} />
-              </motion.a>
-            ))}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="font-mono text-display-xl text-content-primary"
+          >
+            Mitesh
+            <br />
+            Vasoya<span className="text-syn-green">_</span>
+          </motion.h1>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="mt-6 font-mono text-lg sm:text-xl"
+          >
+            <span className="block text-content-secondary">Software engineer building</span>
+            <span className="relative mt-1 block h-8 overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={roleIdx}
+                  initial={{ y: '100%', opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: '-100%', opacity: 0 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute left-0 top-0 whitespace-nowrap text-syn-blue"
+                >
+                  <span className="text-content-muted">&lt;</span>
+                  {roles[roleIdx]}
+                  <span className="text-content-muted"> /&gt;</span>
+                </motion.span>
+              </AnimatePresence>
+            </span>
           </motion.div>
-        </motion.div>
-      </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-      >
-        <span className="text-xs font-mono uppercase tracking-[0.2em] text-content-muted">Scroll</span>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mt-6 max-w-xl text-base leading-relaxed text-content-secondary md:text-lg"
+          >
+            {profile.summary}
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mt-9 flex flex-wrap items-center gap-3"
+          >
+            <button onClick={() => go('projects')} className="btn-primary group">
+              ./view-projects
+              <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+            </button>
+            <a href={profile.resume} download className="btn-ghost">
+              <Download size={15} />
+              resume
+            </a>
+            <div className="ml-1 flex gap-2">
+              <a href={profile.github} target="_blank" rel="noopener noreferrer" className="icon-btn" aria-label="GitHub">
+                <Github size={17} />
+              </a>
+              <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="icon-btn" aria-label="LinkedIn">
+                <Linkedin size={17} />
+              </a>
+              <a href={`mailto:${profile.email}`} className="icon-btn" aria-label="Email">
+                <Mail size={17} />
+              </a>
+            </div>
+          </motion.div>
+        </div>
+
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-5 h-8 border-2 border-gray-900/40 dark:border-gray-100/40 rounded-full flex justify-center pt-1.5"
+          initial={{ opacity: 0, y: 24, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ delay: 0.35, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="w-1 h-2 bg-sage-500 dark:bg-sage-400 rounded-full" />
+          <TerminalSession />
         </motion.div>
-      </motion.div>
+      </div>
+
+      <motion.dl
+        initial="hidden"
+        animate="visible"
+        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: 0.6 } } }}
+        className="relative mx-auto mt-16 grid max-w-6xl grid-cols-2 overflow-hidden rounded-xl border border-line bg-line md:grid-cols-4"
+        style={{ gap: '1px' }}
+      >
+        {stats.map((s) => (
+          <motion.div
+            key={s.label}
+            variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+            className="flex flex-col-reverse justify-end bg-surface-elevated p-5 md:p-6"
+          >
+            <dt className="mt-1 font-mono text-[0.7rem] uppercase tracking-wider text-content-muted">
+              {s.label}
+            </dt>
+            <dd className="font-mono text-2xl font-bold text-content-primary md:text-3xl">{s.value}</dd>
+          </motion.div>
+        ))}
+      </motion.dl>
     </section>
   );
 }

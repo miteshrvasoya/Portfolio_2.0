@@ -1,80 +1,146 @@
-import { motion } from 'framer-motion';
-import { Moon, Sun } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Menu, Moon, Sun, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
-import { useState, useEffect } from 'react';
 
 const navLinks = [
-  { id: 'about', label: 'About' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'blog', label: 'Blog' },
-  { id: 'contact', label: 'Contact' },
+  { id: 'about', file: 'about.md' },
+  { id: 'stack', file: 'stack.json' },
+  { id: 'experience', file: 'experience.log' },
+  { id: 'projects', file: 'projects/' },
+  { id: 'blog', file: 'blog.mdx' },
+  { id: 'contact', file: 'contact.sh' },
 ];
 
 export function Navigation() {
   const { theme, toggleTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollToSection = (id: string) => {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      },
+      { rootMargin: '-45% 0px -50% 0px' }
+    );
+    navLinks.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const go = (id: string) => {
+    setOpen(false);
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <motion.nav
-      initial={{ y: -100, opacity: 0 }}
+      initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      style={{
-        backgroundColor: theme === 'dark'
-          ? scrolled ? 'rgba(17, 24, 20, 0.92)' : 'rgba(17, 24, 20, 0.6)'
-          : undefined,
-      }}
-      className={`sticky top-0 z-50 border-b-2 border-gray-900 dark:border-gray-100 backdrop-blur-md transition-shadow duration-300 ${
-        scrolled ? 'shadow-lg shadow-black/5 dark:shadow-black/20' : ''
-      } ${theme === 'light' ? (scrolled ? 'bg-surface/95' : 'bg-surface/70') : ''}`}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
+        scrolled || open
+          ? 'border-line bg-surface/85 backdrop-blur-xl'
+          : 'border-transparent bg-transparent'
+      }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <motion.button
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          whileHover={{ scale: 1.02 }}
-          className="font-display font-semibold text-lg md:text-xl tracking-tight text-content-primary"
+          className="group flex items-center font-mono text-sm font-semibold"
+          aria-label="Back to top"
         >
-          Mitesh Vasoya
-        </motion.button>
+          <span className="text-syn-green">mitesh</span>
+          <span className="text-content-muted">@</span>
+          <span className="text-syn-blue">dev</span>
+          <span className="text-content-muted">:~$</span>
+          <span className="ml-1 inline-block h-4 w-2 animate-blink bg-content-primary" />
+        </button>
 
-        <div className="hidden md:flex items-center gap-1">
-          {navLinks.map((link, i) => (
-            <motion.button
-              key={link.id}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.05 }}
-              onClick={() => scrollToSection(link.id)}
-              className="nav-link relative px-3 py-2 rounded-sm transition-colors group"
-            >
-              {link.label}
-              <span className="absolute bottom-1 left-3 right-3 h-0.5 scale-x-0 bg-sage-600 dark:bg-sage-400 transition-transform duration-300 origin-left group-hover:scale-x-100" />
-            </motion.button>
-          ))}
+        <ul className="hidden items-center gap-0.5 lg:flex">
+          {navLinks.map((link) => {
+            const isActive = active === link.id;
+            return (
+              <li key={link.id}>
+                <button
+                  onClick={() => go(link.id)}
+                  className={`relative rounded-md px-3 py-1.5 font-mono text-[0.8rem] transition-colors ${
+                    isActive
+                      ? 'text-content-primary'
+                      : 'text-content-muted hover:text-content-primary'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-active"
+                      className="absolute inset-0 rounded-md border border-line bg-surface-elevated"
+                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  <span className="relative">{link.file}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="flex items-center gap-2">
+          <a
+            href="/Mitesh_Vasoya_Software_Engineer_Resume.pdf"
+            download
+            className="btn-ghost hidden !px-3 !py-2 !text-xs sm:inline-flex"
+          >
+            resume.pdf
+          </a>
+          <button onClick={toggleTheme} className="icon-btn" aria-label="Toggle colour theme">
+            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
+          <button
+            onClick={() => setOpen((o) => !o)}
+            className="icon-btn lg:hidden"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+          >
+            {open ? <X size={18} /> : <Menu size={18} />}
+          </button>
         </div>
-
-        <motion.button
-          onClick={toggleTheme}
-          whileHover={{ scale: 1.05, rotate: 15 }}
-          whileTap={{ scale: 0.95 }}
-          className="w-12 h-12 border-2 border-gray-900 dark:border-gray-100 flex items-center justify-center bg-surface-elevated hover:bg-sage-200 dark:hover:bg-sage-800 transition-colors neo-card-sm"
-          aria-label="Toggle theme"
-        >
-          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-        </motion.button>
       </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden border-t border-line px-4 lg:hidden"
+          >
+            {navLinks.map((link, i) => (
+              <li key={link.id}>
+                <button
+                  onClick={() => go(link.id)}
+                  className="flex w-full items-center gap-3 py-3 font-mono text-sm text-content-secondary hover:text-content-primary"
+                >
+                  <span className="text-content-muted">{String(i + 1).padStart(2, '0')}</span>
+                  {link.file}
+                </button>
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 }

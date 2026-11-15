@@ -39,11 +39,16 @@ export default {
       animation: {
         blink: 'blink 1.1s steps(1) infinite',
         'pulse-dot': 'pulse-dot 2s ease-in-out infinite',
+        marquee: 'marquee 40s linear infinite',
       },
       keyframes: {
         blink: {
           '0%, 50%': { opacity: '1' },
           '50.01%, 100%': { opacity: '0' },
+        },
+        marquee: {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-50%)' },
         },
         'pulse-dot': {
           '0%, 100%': { opacity: '1', transform: 'scale(1)' },

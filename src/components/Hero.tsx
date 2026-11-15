@@ -1,228 +1,201 @@
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
-import { Download, Mail, Github, Linkedin, ArrowRight } from 'lucide-react';
-import { ParallaxBackground } from './ParallaxBackground';
-import { buttonHover, buttonTap, staggerContainer, fadeUp } from '../utils/motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowDown, Download, Github, Linkedin } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { profile } from '../data/portfolio';
+import { InteractiveShell } from './hero/InteractiveShell';
+import { SystemNetwork } from './hero/SystemNetwork';
 
-const subtitles = [
-  'Backend Engineer',
-  'Fintech Systems Builder',
-  'Payment Infrastructure',
-  'Distributed Systems',
-];
+const GLYPHS = '!<>-_\\/[]{}=+*^?#01ABCDEF';
 
-const stats = [
-  { value: '₹4Cr+', label: 'Disbursed' },
-  { value: '2.7', label: 'Yrs Experience' },
-  { value: '4', label: 'Payment Gateways' },
-  { value: '0', label: 'Duplicate Payments' },
-];
-
-const name = 'Mitesh Vasoya';
-
-export function Hero() {
-  const [currentSubtitle, setCurrentSubtitle] = useState(0);
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end start'],
-  });
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+/** Decodes text from random glyphs, left to right — like data resolving. */
+function useScramble(text: string, duration = 1400) {
+  const reduce = useReducedMotion();
+  const [out, setOut] = useState(reduce ? text : text.replace(/\S/g, ' '));
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSubtitle((prev) => (prev + 1) % subtitles.length);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
+    if (reduce) return;
+    const start = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const p = Math.min((now - start) / duration, 1);
+      const revealed = Math.floor(p * text.length);
+      setOut(
+        text
+          .split('')
+          .map((ch, i) =>
+            ch === ' ' || i < revealed ? ch : GLYPHS[Math.floor(Math.random() * GLYPHS.length)]
+          )
+          .join('')
+      );
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    const t = setTimeout(() => (raf = requestAnimationFrame(tick)), 250);
+    return () => {
+      clearTimeout(t);
+      cancelAnimationFrame(raf);
+    };
+  }, [text, duration, reduce]);
 
-  const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  return out;
+}
+
+const logLines = [
+  { level: 'OK', color: 'text-syn-green', msg: 'payouts.disbursed total=₹4Cr+ status=settled' },
+  { level: 'INFO', color: 'text-syn-blue', msg: 'settlements.monthly volume=₹8Mn partners=active' },
+  { level: 'OK', color: 'text-syn-green', msg: 'idempotency.check duplicate_payouts=0' },
+  { level: 'INFO', color: 'text-syn-blue', msg: 'gateways.connected [cashfree, paytm, easebuzz, phonepe]' },
+  { level: 'PERF', color: 'text-syn-orange', msg: 'postgres.query_time Δ=-40% after indexing' },
+  { level: 'INFO', color: 'text-syn-purple', msg: 'side_project tryk.in status=live' },
+  { level: 'OK', color: 'text-syn-green', msg: 'engineer.uptime 2.7y — still shipping' },
+];
+
+function LogTicker() {
+  const row = (
+    <div className="flex shrink-0 items-center gap-10 pr-10">
+      {logLines.map((l) => (
+        <span key={l.msg} className="whitespace-nowrap">
+          <span className={l.color}>[{l.level}]</span> <span className="text-content-secondary">{l.msg}</span>
+        </span>
+      ))}
+    </div>
+  );
+  return (
+    <div className="relative overflow-hidden border-y border-line bg-surface-elevated/70 py-3 font-mono text-xs backdrop-blur-sm [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
+      <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
+        {row}
+        {row}
+      </div>
+    </div>
+  );
+}
+
+export function Hero() {
+  const name = useScramble(profile.name);
+  const ref = useRef<HTMLElement>(null);
+
+  const onMove = (e: React.MouseEvent) => {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    ref.current!.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    ref.current!.style.setProperty('--my', `${e.clientY - r.top}px`);
   };
 
   return (
     <section
-      ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center px-6 py-24 overflow-hidden"
+      ref={ref}
+      onMouseMove={onMove}
+      className="group/hero relative -mt-16 flex min-h-[100svh] flex-col overflow-hidden pt-16 [--mx:50%] [--my:30%]"
     >
-      <ParallaxBackground />
+      {/* layer 1: the systems map */}
+      <div className="absolute inset-0 opacity-70 dark:opacity-60">
+        <SystemNetwork />
+      </div>
+      {/* layer 2: grid revealed by the cursor spotlight */}
+      <div
+        className="bg-grid pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover/hero:opacity-100"
+        style={{
+          maskImage: 'radial-gradient(260px circle at var(--mx) var(--my), black, transparent 75%)',
+          WebkitMaskImage: 'radial-gradient(260px circle at var(--mx) var(--my), black, transparent 75%)',
+        }}
+        aria-hidden="true"
+      />
+      {/* layer 3: vignette so the text stays readable */}
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_45%,rgb(var(--surface))_35%,rgb(var(--surface)/0.6)_65%,transparent_100%)]"
+        aria-hidden="true"
+      />
 
-      <motion.div
-        style={{ y: contentY, opacity: contentOpacity }}
-        className="relative max-w-5xl w-full z-10"
-      >
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 border-2 border-gray-900 dark:border-gray-100 bg-surface-elevated font-mono text-xs uppercase tracking-[0.15em] mb-8 neo-card-sm"
+          className="mb-8 inline-flex items-center gap-3 rounded-full border border-line bg-surface-elevated/80 py-1 pl-1 pr-4 font-mono text-xs backdrop-blur"
         >
-          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse-soft" />
-          Open to opportunities
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-syn-green/15 px-2.5 py-1 text-syn-green">
+            <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-syn-green" />
+            200 OK
+          </span>
+          <span className="text-content-secondary">open to new opportunities</span>
         </motion.div>
 
-        <motion.h1
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="font-display text-display-xl text-content-primary mb-5"
-        >
-          {name.split('').map((char, i) => (
-            <motion.span
-              key={`${char}-${i}`}
-              variants={{
-                hidden: { opacity: 0, y: 40 },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  transition: { duration: 0.5, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] },
-                },
-              }}
-              className="inline-block"
-              style={{ whiteSpace: char === ' ' ? 'pre' : undefined }}
-            >
-              {char === ' ' ? '\u00A0' : char}
-            </motion.span>
-          ))}
-        </motion.h1>
+        <p className="mb-4 font-mono text-sm text-content-muted">
+          <span className="text-syn-purple">const</span> <span className="text-syn-yellow">engineer</span> ={' '}
+          <span className="text-syn-purple">await</span> <span className="text-syn-blue">resolve</span>(
+          <span className="text-syn-string">'mitesh'</span>);
+        </p>
 
-        <div className="h-14 mb-8">
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={currentSubtitle}
-              initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -16, filter: 'blur(4px)' }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display text-2xl md:text-3xl font-semibold text-sage-600 dark:text-sage-400"
-            >
-              {subtitles[currentSubtitle]}
-            </motion.p>
-          </AnimatePresence>
-        </div>
+        <h1
+          className="whitespace-nowrap font-mono font-extrabold leading-[0.95] tracking-[-0.05em] text-content-primary"
+          style={{ fontSize: 'clamp(2.6rem, 10.5vw, 8.5rem)' }}
+          aria-label={profile.name}
+        >
+          <span aria-hidden="true">{name}</span>
+          <span className="ml-1 inline-block h-[0.8em] w-[0.08em] translate-y-[0.08em] animate-blink bg-syn-green align-baseline" />
+        </h1>
 
         <motion.p
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.4 }}
-          className="prose-body mb-12 max-w-2xl"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.6 }}
+          className="mt-7 max-w-3xl text-balance text-xl leading-snug text-content-secondary sm:text-2xl md:text-[1.7rem]"
         >
-          Backend Engineer with 2.7 years building fault-tolerant fintech systems —
-          payment gateways, idempotent APIs, and queue-based payout infrastructure
-          processing millions in real transactions.
+          I build backend systems that{' '}
+          <span className="relative whitespace-nowrap font-semibold text-content-primary">
+            move real money
+            <svg className="absolute -bottom-1.5 left-0 w-full" viewBox="0 0 200 8" preserveAspectRatio="none" aria-hidden="true">
+              <motion.path
+                d="M1 5 Q 50 1, 100 5 T 199 4"
+                fill="none"
+                stroke="rgb(var(--syn-green))"
+                strokeWidth="3"
+                strokeLinecap="round"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ delay: 1.7, duration: 0.8, ease: 'easeInOut' }}
+              />
+            </svg>
+          </span>{' '}
+          — and <span className="whitespace-nowrap font-semibold text-content-primary">never pay twice</span>.
         </motion.p>
 
         <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="grid grid-cols-2 md:grid-cols-4 gap-0 mb-12 border-2 border-gray-900 dark:border-gray-100 overflow-hidden neo-card"
-          style={{ boxShadow: '4px 4px 0px currentColor' }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.45, duration: 0.6 }}
+          className="mt-10 w-full max-w-2xl"
         >
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              variants={fadeUp}
-              className={`px-5 py-5 bg-surface-elevated text-center ${
-                index < stats.length - 1
-                  ? 'border-r-2 border-b-2 md:border-b-0 border-gray-900 dark:border-gray-100'
-                  : 'border-b-2 md:border-b-0'
-              } ${index >= 2 ? 'border-b-0' : ''}`}
-            >
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.6 + index * 0.1, type: 'spring', stiffness: 200 }}
-                className="font-display text-2xl md:text-3xl font-bold text-sage-600 dark:text-sage-400"
-              >
-                {stat.value}
-              </motion.div>
-              <div className="text-xs font-mono uppercase tracking-[0.15em] text-content-muted mt-1.5">
-                {stat.label}
-              </div>
-            </motion.div>
-          ))}
+          <InteractiveShell />
         </motion.div>
 
         <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="flex flex-wrap gap-4 items-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.7 }}
+          className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-xs text-content-muted"
         >
-          <motion.button
-            variants={fadeUp}
-            whileHover={buttonHover}
-            whileTap={buttonTap}
-            onClick={() => scrollToSection('projects')}
-            className="btn-neo bg-sage-400 dark:bg-sage-600 text-gray-900 dark:text-gray-100 hover:bg-sage-500 dark:hover:bg-sage-700 flex items-center gap-2"
-          >
-            View Projects
-            <ArrowRight size={16} />
-          </motion.button>
-
-          <motion.a
-            variants={fadeUp}
-            whileHover={buttonHover}
-            whileTap={buttonTap}
-            href="/Mitesh_Vasoya_Software_Engineer_Resume.pdf"
-            download
-            className="btn-neo bg-surface-elevated hover:bg-sand-200 dark:hover:bg-sand-800 flex items-center gap-2"
-          >
-            <Download size={16} />
-            Resume
-          </motion.a>
-
-          <motion.button
-            variants={fadeUp}
-            whileHover={buttonHover}
-            whileTap={buttonTap}
-            onClick={() => scrollToSection('contact')}
-            className="btn-neo bg-surface-elevated hover:bg-surface-muted flex items-center gap-2"
-          >
-            <Mail size={16} />
-            Contact
-          </motion.button>
-
-          <motion.div variants={fadeUp} className="flex gap-3 ml-auto">
-            {[
-              { href: 'https://github.com/miteshrvasoya', icon: Github, label: 'GitHub' },
-              { href: 'https://linkedin.com/in/mitesh-vasoya', icon: Linkedin, label: 'LinkedIn' },
-            ].map(({ href, icon: Icon, label }) => (
-              <motion.a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                whileHover={{ scale: 1.08, y: -3 }}
-                whileTap={buttonTap}
-                className="w-11 h-11 border-2 border-gray-900 dark:border-gray-100 flex items-center justify-center bg-surface-elevated hover:bg-sage-200 dark:hover:bg-sage-800 transition-colors neo-card-sm"
-              >
-                <Icon size={18} />
-              </motion.a>
-            ))}
-          </motion.div>
+          <a href={profile.resume} download className="inline-flex items-center gap-1.5 hover:text-syn-green">
+            <Download size={13} /> resume.pdf
+          </a>
+          <span aria-hidden="true">/</span>
+          <a href={profile.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-syn-blue">
+            <Github size={13} /> github
+          </a>
+          <span aria-hidden="true">/</span>
+          <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-syn-blue">
+            <Linkedin size={13} /> linkedin
+          </a>
         </motion.div>
-      </motion.div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-      >
-        <span className="text-xs font-mono uppercase tracking-[0.2em] text-content-muted">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-5 h-8 border-2 border-gray-900/40 dark:border-gray-100/40 rounded-full flex justify-center pt-1.5"
+      <div className="relative z-10">
+        <a
+          href="#about"
+          className="absolute -top-12 left-1/2 hidden -translate-x-1/2 items-center gap-1.5 font-mono text-[0.7rem] text-content-muted hover:text-content-primary md:inline-flex"
         >
-          <div className="w-1 h-2 bg-sage-500 dark:bg-sage-400 rounded-full" />
-        </motion.div>
-      </motion.div>
+          <ArrowDown size={12} className="animate-bounce" /> scroll
+        </a>
+        <LogTicker />
+      </div>
     </section>
   );
 }

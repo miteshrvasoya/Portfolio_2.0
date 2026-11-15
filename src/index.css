@@ -3,125 +3,123 @@
 @tailwind utilities;
 
 @layer base {
+  /* Light — "paper" editor theme */
   :root {
-    --content-primary: 23 23 23;
-    --content-secondary: 55 65 55;
-    --content-muted: 107 114 107;
-    --surface: 245 240 232;
+    --content-primary: 15 23 42;
+    --content-secondary: 59 70 86;
+    --content-muted: 107 118 133;
+    --surface: 246 247 249;
     --surface-elevated: 255 255 255;
-    --surface-muted: 232 222 204;
+    --surface-muted: 236 239 243;
+    --line: 214 220 228;
+
+    --syn-green: 26 127 55;
+    --syn-blue: 9 105 218;
+    --syn-purple: 130 80 223;
+    --syn-orange: 188 76 0;
+    --syn-red: 207 34 46;
+    --syn-yellow: 154 103 0;
+    --syn-string: 10 48 105;
+    color-scheme: light;
   }
 
+  /* Dark — "midnight" editor theme */
   .dark {
-    --content-primary: 245 245 244;
-    --content-secondary: 203 213 203;
-    --content-muted: 156 163 156;
-    --surface: 17 24 20;
-    --surface-elevated: 24 32 28;
-    --surface-muted: 31 41 36;
+    --content-primary: 230 237 243;
+    --content-secondary: 170 180 195;
+    --content-muted: 110 120 137;
+    --surface: 10 13 19;
+    --surface-elevated: 17 21 29;
+    --surface-muted: 14 18 25;
+    --line: 36 43 55;
+
+    --syn-green: 126 231 135;
+    --syn-blue: 121 192 255;
+    --syn-purple: 210 168 255;
+    --syn-orange: 255 166 87;
+    --syn-red: 255 123 114;
+    --syn-yellow: 227 179 65;
+    --syn-string: 165 214 255;
+    color-scheme: dark;
   }
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply font-body text-body-md text-content-secondary bg-surface;
+    @apply bg-surface font-sans text-content-secondary;
     font-feature-settings: 'kern' 1, 'liga' 1;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-display text-content-primary;
-    font-weight: 700;
-  }
-
-  h1 {
-    @apply text-display-xl;
-  }
-
-  h2 {
-    @apply text-display-md;
-  }
-
-  h3 {
-    @apply text-xl md:text-2xl;
-  }
-
-  p {
-    @apply text-body-md md:text-body-lg text-content-secondary;
-  }
-
-  strong {
-    @apply font-bold text-content-primary;
-  }
-
-  a {
-    @apply transition-colors duration-200;
+  h1, h2, h3, h4 {
+    @apply text-content-primary;
   }
 
   ::selection {
-    @apply bg-sage-400 dark:bg-sage-600 text-gray-900 dark:text-gray-100;
+    @apply bg-syn-blue/25 text-content-primary;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-syn-blue ring-offset-2 ring-offset-surface;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
   }
 }
 
 @layer components {
-  .neo-card {
-    @apply border-2 border-gray-900 dark:border-gray-100 bg-surface-elevated;
-    box-shadow: 4px 4px 0px currentColor;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  /* A window/panel like an editor pane */
+  .panel {
+    @apply rounded-xl border border-line bg-surface-elevated;
+    box-shadow: 0 1px 0 rgb(var(--line) / 0.5), 0 24px 48px -32px rgb(0 0 0 / 0.35);
   }
 
-  .neo-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px currentColor;
+  .panel-header {
+    @apply flex items-center gap-3 border-b border-line bg-surface-muted/80 px-4 py-2.5 font-mono text-xs text-content-muted;
   }
 
-  .neo-card-sm {
-    @apply border-2 border-gray-900 dark:border-gray-100;
-    box-shadow: 3px 3px 0px currentColor;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  .panel-hover {
+    @apply transition-[border-color,transform] duration-300;
+  }
+  .panel-hover:hover {
+    @apply -translate-y-0.5 border-syn-blue/50;
   }
 
-  .neo-card-sm:hover {
-    transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0px currentColor;
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-md border border-line bg-surface-muted px-2 py-1 font-mono text-[0.72rem] text-content-secondary;
   }
 
-  .section-label {
-    @apply text-xs font-mono uppercase tracking-[0.2em] font-medium;
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 font-mono text-sm font-medium transition-all duration-200;
+  }
+  .btn-primary {
+    @apply btn bg-syn-green text-surface hover:brightness-110;
+  }
+  .btn-ghost {
+    @apply btn border border-line bg-surface-elevated text-content-primary hover:border-syn-blue/60 hover:text-syn-blue;
   }
 
-  .section-alt {
-    @apply bg-surface-muted;
+  .icon-btn {
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-lg border border-line bg-surface-elevated text-content-secondary transition-colors hover:border-syn-blue/60 hover:text-syn-blue;
   }
 
-  .prose-body {
-    @apply font-body text-body-md md:text-body-lg leading-relaxed text-content-secondary;
+  .bg-grid {
+    background-image:
+      linear-gradient(rgb(var(--line) / 0.55) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--line) / 0.55) 1px, transparent 1px);
+    background-size: 44px 44px;
   }
 
-  .btn-neo {
-    @apply px-6 py-3 border-2 border-gray-900 dark:border-gray-100 font-mono text-sm uppercase tracking-wider font-semibold transition-all duration-200;
-    box-shadow: 4px 4px 0px currentColor;
-  }
-
-  .btn-neo:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px currentColor;
-  }
-
-  .btn-neo:active {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px currentColor;
-  }
-
-  .nav-link {
-    @apply font-body text-[0.9375rem] font-medium tracking-normal text-content-primary;
-    letter-spacing: 0.01em;
-  }
-
-  .nav-link:hover {
-    @apply text-sage-700 dark:text-sage-300;
+  .field {
+    @apply w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 font-mono text-sm text-content-primary placeholder:text-content-muted transition-colors focus:border-syn-blue focus:outline-none;
   }
 }

@@ -1,36 +1,38 @@
-import { motion } from 'framer-motion';
-import { fadeUp } from '../utils/motion';
+import { AlertCircle, Check, GitBranch } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
+import { profile } from '../data/portfolio';
 
 export function Footer() {
+  const { theme } = useTheme();
   return (
-    <footer className="py-16 px-6 border-t-2 border-gray-900 dark:border-gray-100 bg-surface">
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeUp}
-        className="max-w-5xl mx-auto text-center"
-      >
-        <motion.h3
-          whileHover={{ scale: 1.02 }}
-          className="font-display text-2xl md:text-3xl font-bold mb-3 text-content-primary"
-        >
-          Mitesh Vasoya
-        </motion.h3>
-        <p className="text-body-md text-content-secondary mb-6 font-body">
-          Backend Engineer · Building systems that scale.
+    <footer className="border-t border-line bg-surface">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-10 text-center sm:flex-row sm:px-6 sm:text-left">
+        <div>
+          <p className="font-mono text-sm font-semibold text-content-primary">{profile.name}</p>
+          <p className="mt-1 text-sm text-content-muted">Software engineer · building systems that don't break.</p>
+        </div>
+        <p className="font-mono text-xs text-content-muted">
+          © {new Date().getFullYear()} {profile.name} · built with React, TypeScript &amp; Tailwind
         </p>
-        <motion.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="h-px w-24 bg-sage-400 dark:bg-sage-600 mx-auto mb-6"
-        />
-        <p className="text-body-sm text-content-muted font-mono">
-          © 2025 Mitesh Vasoya. All rights reserved.
-        </p>
-      </motion.div>
+      </div>
+
+      {/* IDE-style status bar */}
+      <div className="border-t border-line bg-surface-muted">
+        <div className="mx-auto flex max-w-6xl items-center gap-4 overflow-hidden whitespace-nowrap px-4 py-1.5 font-mono text-[0.68rem] text-content-muted sm:px-6">
+          <span className="inline-flex items-center gap-1 text-syn-blue">
+            <GitBranch size={11} /> main
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <Check size={11} className="text-syn-green" /> build passing
+          </span>
+          <span className="hidden items-center gap-1 sm:inline-flex">
+            <AlertCircle size={11} /> 0 errors, 0 warnings
+          </span>
+          <span className="ml-auto hidden md:inline">UTF-8</span>
+          <span className="hidden md:inline">TypeScript React</span>
+          <span>theme: {theme}</span>
+        </div>
+      </div>
     </footer>
   );
 }

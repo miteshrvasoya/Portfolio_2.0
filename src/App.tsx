@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 function App() {
 
   useEffect(() => {
-    (window as any).TrykConfig = {
+    (window as Window & { TrykConfig?: unknown }).TrykConfig = {
       widgetKey: 'wgt_u4vbotw233',
       apiUrl: 'https://tryk-backend.onrender.com/api'
     };
@@ -25,7 +25,7 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-surface text-content-primary transition-colors duration-300">
+    <div className="min-h-screen bg-surface text-content-secondary transition-colors duration-300">
       <ScrollProgress />
       <Navigation />
       <Hero />
